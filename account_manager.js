@@ -45,7 +45,16 @@ exports.canFulfillQuery = function(account)
 
 
 /**
- * Log a request 
+ * Log a request executed on behalf of a user.
+ *
+ * @param {Object} account Object with account information for the user that
+ *      executed the given request. See the Account Object structure in the
+ *      structures section of the project wiki.
+ * @param {Object} query The query executed. See the Query Object structure in
+ *      the structures section of the project wiki.
+ * @param {String} error Optional parameter. If provided, the error encountered
+ *      while fulfilling this user's request (executing the provided query for
+ *      the provided user).
 **/ 
 exports.recordFulfilledQuery = function(account, query, error)
 {
