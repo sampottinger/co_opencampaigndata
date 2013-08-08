@@ -11,6 +11,9 @@
  * @license GNU GPLv3
 **/
 
+var ACCOUNT_COLLECTION = 'accounts';
+var USAGE_COLLECTION = 'usages';
+
 
 /**
  * Find a user account record given that user's email address.
@@ -78,8 +81,9 @@ exports.putUser = function(account)
  *      user requests, exceeding request limits, server errors, or anything that
  *      caused the appliction to fail to return 200 (OK). If no error, this
  *      parameter should be left as undefined.
- * @return {Q.proimse} Promise that resovles to a QueryLog Object as described
- *      in the structures section of the project wiki.
+ * @return {Q.proimse} Promise that resovles to undefined after the asynchronous
+ *      write request has been made to the database. This will potentially
+ *      resolve before the actual write.
 **/
 exports.reportUsage = function(account, query, error)
 {
@@ -94,10 +98,34 @@ exports.reportUsage = function(account, query, error)
  * executed for a given user.
  *
  * @param {String} apiKey Finds log entries for the user that owns this API key.
+ * @param {Date} startDate Start of the datetime range to find activity within.
+ * @param {Date} endDate End of the datetime range to find activity within.
  * @return {Q.promise} Promise that resolves to an Array of QueryLog Objects as
  *      described in the structures section of the project wiki.
 **/
-exports.findAPIKeyUsage = function(apiKey)
+exports.findAPIKeyUsage = function(apiKey, startDate, endDate)
+{
+
+};
+
+
+/**
+ * Remove old API usage records for the user with the given API key.
+ *
+ * Requst API usage records older than a certain datetime be removed for the
+ * user with the given API key.
+ *
+ * @param {String} apiKey The API key of the user for whom old API usage records
+ *      should be removed.
+ * @param {Date} endDate The datetime before which API usage records should be
+ *      removed.
+ * @param {Boolean} removeErrors If true, remove all records before the endDate.
+ *      If false, only remove records that did not have an error.
+ * @return {Q.proimse} Promise that resovles to undefined after the asynchronous
+ *      remove request has been made to the database. This will potentially
+ *      resolve before the actual remove.
+**/
+exports.removeOldUsageRecords = function(apiKey, endDate, removeErrors)
 {
 
 };

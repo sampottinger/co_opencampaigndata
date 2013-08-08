@@ -14,11 +14,18 @@
  *
  * @param {Object} query An Query Object as described in the structures section
  *      of the project wiki.
- * @return {Q.promise} Promise that resolves to an Array of Object where each
- *      Object holds the information loaded from a single record returned from
- *      the database.
+ * @param {function} onNext Callback for when a record has been loaded from the
+ *      database.
+ * @param {function} onEnd Callback for when all records have been loaded from
+ *      the database. Will not execute if error encountered.
+ * @param {function} onError Callback if an error is encountered while reading
+ *      from the results stream. Should take a single String argument describing
+ *      the error encountered.
+ * @return {Q.promise} Promise that resolves to undefined. Will resolve after
+ *      streaming results has started but may resolve before that streaming has
+ *      finished.
 **/
-exports.executeQuery = function(query)
+exports.executeQuery = function(query, onNext, onEnd, onError)
 {
 
 };
