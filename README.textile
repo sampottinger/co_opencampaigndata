@@ -48,6 +48,7 @@ This open source effort uses:
 * "nodeunit":https://github.com/caolan/nodeunit
 * "Node.js":http://nodejs.org/
 * "node-mongodb-native":https://github.com/mongodb/node-mongodb-native
+* "node-pool":https://github.com/coopernurse/node-pool
 * "pycotracer":https://github.com/samnsparky/pycotracer
 * "Q":https://github.com/kriskowal/q
 * "rewire":https://github.com/jhnns/rewire/
