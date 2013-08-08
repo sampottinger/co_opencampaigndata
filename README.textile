@@ -25,6 +25,7 @@ All code should conform to the "Google JavaScript Style Guidelines":http://googl
 * Follow the "JSDoc":http://usejsdoc.org/ comment format. The service requires all modules to start with a JSDoc comment and all functions exposed as exports to have a valid JSDoc comment. Commenting on other functions should conform to JSDoc but is not necessarily required.
 * All unit testing should use "JSDoc":http://usejsdoc.org/ and dependency injection for those tests should use "rewire":https://github.com/jhnns/rewire/.
 * Encapsulate potentially long running logic into functions and those functions should return a "Q promise":https://github.com/kriskowal/q.
+* An @author tag should be added at the top of the module during a major contribution. That list of authors should be alphabetically sorted. Do not expose email addresses in that tag.
 
 
 h3. Testing
