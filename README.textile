@@ -23,7 +23,7 @@ h3. Development Environment and Standards
 All code should conform to the "Google JavaScript Style Guidelines":http://google-styleguide.googlecode.com/svn/trunk/javascriptguide.xml. However, in addition to those stylistic guidelines, please follow the following standards:
 * This service maintains a minimum of 80% code coverage by automated unit test.
 * Follow the "JSDoc":http://usejsdoc.org/ comment format. The service requires all modules to start with a JSDoc comment and all functions exposed as exports to have a valid JSDoc comment. Commenting on other functions should conform to JSDoc but is not necessarily required.
-* All unit testing should use "JSDoc":http://usejsdoc.org/ and dependency injection for those tests should use "rewire":https://github.com/jhnns/rewire/.
+* All unit testing should use "nodeunit":https://github.com/caolan/nodeunit and dependency injection for those tests should use "rewire":https://github.com/jhnns/rewire/.
 * Encapsulate potentially long running logic into functions and those functions should return a "Q promise":https://github.com/kriskowal/q.
 * An @author tag should be added at the top of the module during a major contribution. That list of authors should be alphabetically sorted. Do not expose email addresses in that tag.
 
