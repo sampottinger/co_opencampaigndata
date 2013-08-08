@@ -26,6 +26,7 @@ All code should conform to the "Google JavaScript Style Guidelines":http://googl
 * All unit testing should use "nodeunit":https://github.com/caolan/nodeunit and dependency injection for those tests should use "rewire":https://github.com/jhnns/rewire/.
 * Encapsulate potentially long running logic into functions and those functions should return a "Q promise":https://github.com/kriskowal/q.
 * An @author tag should be added at the top of the module during a major contribution. That list of authors should be alphabetically sorted. Do not expose email addresses in that tag.
+* Interaction with the database should favor stream or equivalent over toArray or equivalent. In other words, avoid loading the entire dataset / subset into memory.
 
 
 h3. Testing
