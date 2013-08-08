@@ -1,0 +1,50 @@
+h1. co_opencampaigndata
+
+Web API service for Colorado campaign finance data aggregated from the State of Colorado's "TRACER":http://tracer.sos.colorado.gov/PublicSite/homepage.aspx system. To be deployed at http://co.opencampaigndata.org.
+
+h2. Authors and License
+
+Released under the "GNU GPL v3":http://www.gnu.org/licenses/gpl.html license.
+
+(c) 2013 "Erik Cunningham":www.linkedin.com/pub/erik-cunningham/1/a74/713/
+(c) 2013 "Ned McClain":http://www.appliedtrust.com/company/bios/ned-mcclain
+(c) 2013 "Sam Pottinger":http://gleap.org
+
+This alphabetically sorted list only lists principal contributors. A complete list is available in package.json.
+
+h2. Background and Motivation
+
+Although Colorado enjoys excellent campaign finance reporting regulation, the state publishes that data through single file archives containing CSV reports. The Colorado Secretary of State Elections Division posts reports (contribution, expenditure, and loan data) through the "Colorado Transparency in Contribution and Expenditure Reporting (TRACER)":http://tracer.sos.colorado.gov/PublicSite/homepage.aspx system. This service provides programmatic access to that dataset along with filtering functionality.
+
+
+h2. Development Environment and Standards
+
+All code should conform to the "Google JavaScript Style Guidelines":http://google-styleguide.googlecode.com/svn/trunk/javascriptguide.xml. However, in addition to those stylistic guidelines, please follow the following standards:
+* This service maintains a minimum of 80% code coverage by automated unit test.
+* Follow the "JSDoc":http://usejsdoc.org/ comment format. The service requires all modules to start with a JSDoc comment and all functions exposed as exports to have a valid JSDoc comment. Commenting on other functions should conform to JSDoc but is not necessarily required.
+* All unit testing should use "JSDoc":http://usejsdoc.org/ and dependency injection for those tests should use "rewire":https://github.com/jhnns/rewire/.
+* Encapsulate potentially long running logic into functions and those functions should return a "Q promise":https://github.com/kriskowal/q.
+
+
+h2. Testing
+
+@nodeunit *_test.js@
+
+Testing will require "nodeunit":https://github.com/caolan/nodeunit and "rewire":https://github.com/jhnns/rewire/
+
+
+h2. Deployment
+
+This service remains under active development and will be deployed to http://co.opencampaigndata.org. Instructions for deployment will be added at that time.
+
+
+h2. Technologies and Resources Used
+
+This open source effort uses:
+* "express":http://expressjs.com/
+* "JSDoc":http://usejsdoc.org/
+* "nodeunit":https://github.com/caolan/nodeunit
+* "Node.js":http://nodejs.org/
+* "node-mongodb-native":https://github.com/mongodb/node-mongodb-native
+* "Q":https://github.com/kriskowal/q
+* "rewire":https://github.com/jhnns/rewire/

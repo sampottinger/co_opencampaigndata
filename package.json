@@ -1,0 +1,27 @@
+{
+    "name":"co_opencampaigndata",
+    "version":"0.0.1",
+    "scripts":{
+        "start":"node server.js"
+    },
+    "description":"Web API service for Colorado campign finance data.",
+    "license":"GPLv3",
+    "repository":{
+        "type":"git",
+        "url":"https://github.com/Samnsparky/co_opencampaigndata.git"
+    },
+    "author":{
+        "name": "Sam Pottinger",
+        "url": "http://gleap.org"
+    },
+    "contributors":[
+        {
+            "name": "Ned McClain",
+            "url": "http://nedmcclain.com/"
+        },
+        {
+            "name": "Erik Cunningham",
+            "url": "www.linkedin.com/pub/erik-cunningham/1/a74/713"
+        }
+    ]
+}
