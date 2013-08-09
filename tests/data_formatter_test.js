@@ -7,7 +7,7 @@
 // TODO: This is experimental and in progress! Do not rely on this code yet!
 // WARNING: This is experimental and in progress! Do not rely on this code yet!
 
-var data_formatter = require('./data_formatter');
+var data_formatter = require('../data_formatter');
 
 
 /**

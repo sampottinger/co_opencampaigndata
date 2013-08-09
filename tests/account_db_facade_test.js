@@ -11,7 +11,7 @@
 
 var rewire = require('rewire');
 
-var mock_mongodb = require('./mock_mongodb');
+var mock_mongodb = require('../mock_mongodb');
 
 var TEST_EMAIL = 'user@test.com';
 var TEST_API_KEY = 'testapikey';

@@ -31,7 +31,7 @@ All code should conform to the "Google JavaScript Style Guidelines":http://googl
 
 h3. Testing
 
-@nodeunit *_test.js@
+@cd tests; nodeunit *_test.js@
 
 Testing will require "nodeunit":https://github.com/caolan/nodeunit and "rewire":https://github.com/jhnns/rewire/
 

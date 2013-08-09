@@ -11,8 +11,8 @@ var q = require('Q');
 var rewire = require('rewire');
 var sinon = require('sinon');
 
-var account_db_facade = require('./account_db_facade');
-var account_manager = rewire('./account_manager');
+var account_db_facade = require('../account_db_facade');
+var account_manager = rewire('../account_manager');
 
 var TEST_EMAIL = 'email@test.com';
 var TEST_API_KEY = 'apikey';
