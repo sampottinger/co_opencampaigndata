@@ -16,6 +16,7 @@ var mock_mongodb = require('./mock_mongodb');
 var TEST_EMAIL = 'user@test.com';
 var TEST_API_KEY = 'testapikey';
 var TEST_ACCOUNT_DB_URI = 'test_account_db_uri';
+var TEST_USAGES_DB_URI = 'test_usages_db_uri';
 var TEST_ACCOUNT_COLLECTION = 'test_accounts';
 var TEST_USAGE_COLLECTION = 'test_usages';
 
@@ -27,6 +28,7 @@ mongodb.__set__('MongoClient', mock_mongo_client);
 // Dependency injection for runtime environment
 var process = rewire('process');
 process.__set__('env.ACCOUNT_DB_URI', TEST_ACCOUNT_DB_URI);
+process.__set__('env.USAGES_DB_URI', TEST_USAGES_DB_URI);
 
 // Partial dependency injection on account_db_facade
 var account_db_facade = rewire('./account_db_facade');
@@ -134,7 +136,7 @@ exports.testReportUsageNoError = function(test)
         test.deepEqual(retRecord.query, query);
         test.equal(retRecord.error, null);
 
-        test.equal(mock_mongo_client.getLastURI(), TEST_ACCOUNT_DB_URI);
+        test.equal(mock_mongo_client.getLastURI(), TEST_USAGES_DB_URI);
         test.equal(mock_mongo_client.getLastCollectionName(),
             TEST_USAGE_COLLECTION);
 
@@ -162,7 +164,7 @@ exports.testReportUsageError = function(test)
         test.deepEqual(retRecord.query, query);
         test.equal(retRecord.error, 'test error');
 
-        test.equal(mock_mongo_client.getLastURI(), TEST_ACCOUNT_DB_URI);
+        test.equal(mock_mongo_client.getLastURI(), TEST_USAGES_DB_URI);
         test.equal(mock_mongo_client.getLastCollectionName(),
             TEST_USAGE_COLLECTION);
 
@@ -209,7 +211,7 @@ exports.testFindAPIKeyUsage = function(test)
             createdOn: {'$gte': startDate, '$lt': endDate}
         });
 
-        test.equal(mock_mongo_client.getLastURI(), TEST_ACCOUNT_DB_URI);
+        test.equal(mock_mongo_client.getLastURI(), TEST_USAGES_DB_URI);
         test.equal(mock_mongo_client.getLastCollectionName(),
             TEST_USAGE_COLLECTION);
 
@@ -240,7 +242,7 @@ exports.testFindAPIKeyUsageRemoveErrors = function(test)
             createdOn: {'$lt': endDate}
         });
 
-        test.equal(mock_mongo_client.getLastURI(), TEST_ACCOUNT_DB_URI);
+        test.equal(mock_mongo_client.getLastURI(), TEST_USAGES_DB_URI);
         test.equal(mock_mongo_client.getLastCollectionName(),
             TEST_USAGE_COLLECTION);
 
@@ -273,7 +275,7 @@ exports.testFindAPIKeyUsageNoRemoveErrors = function(test)
             error: null
         });
 
-        test.equal(mock_mongo_client.getLastURI(), TEST_ACCOUNT_DB_URI);
+        test.equal(mock_mongo_client.getLastURI(), TEST_USAGES_DB_URI);
         test.equal(mock_mongo_client.getLastCollectionName(),
             TEST_USAGE_COLLECTION);
 
