@@ -17,7 +17,10 @@ var serializationStrategies = {
 
 
 /**
- * Format the given collection of Objects to a 2D CSV table.
+ * Serialize the given collection of Objects to a 2D CSV table.
+ *
+ * Serialize the given collection of Objects to a 2D CSV table with a comma as
+ * a delimeter and double quotes for quoting.
  *
  * @param {Array} corpus Array of Object to convert to a CSV table.
  * @param {Array} fields Array of String field names to include in the CSV
@@ -67,6 +70,8 @@ function formatAsJSON(corpus, fields, label)
  * @param {String} label If the format requires a label describing the corpus
  *      (examples include expenditures, loans, or contributions), this String
  *      label will be used.
+ * @return {Q.promise} Promise that resolves to a String containing the
+ *      resulting serialization.
 **/
 exports.format = function(format, corpus, fields, label)
 {
