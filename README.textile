@@ -33,7 +33,7 @@ h3. Testing
 
 @cd tests; nodeunit *_test.js@
 
-Testing will require "nodeunit":https://github.com/caolan/nodeunit and "rewire":https://github.com/jhnns/rewire/
+Testing will require "nodeunit":https://github.com/caolan/nodeunit, "rewire":https://github.com/jhnns/rewire/, and "sinon":https://npmjs.org/package/sinon.
 
 
 h3. Deployment
@@ -53,3 +53,4 @@ This open source effort uses:
 * "pycotracer":https://github.com/samnsparky/pycotracer
 * "Q":https://github.com/kriskowal/q
 * "rewire":https://github.com/jhnns/rewire/
+* "sinon":https://npmjs.org/package/sinon
