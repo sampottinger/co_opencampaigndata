@@ -7,6 +7,7 @@
 
 // TODO: This is experimental and in progress! Do not rely on this code yet!
 // WARNING: This is experimental and in progress! Do not rely on this code yet!
+// TODO: This form of dependency injection is terribly terribly messy.
 
 var rewire = require('rewire');
 
@@ -36,7 +37,8 @@ account_db_facade.__set__('USAGE_COLLECTION', TEST_USAGE_COLLECTION);
 /**
  * Test getting a user account record given that user's email address.
  *
- * @param {nodeunit.test} Object describing the nodeunit test currently running.
+ * @param {nodeunit.test} test Object describing the nodeunit test currently
+ *      running.
 **/
 exports.testGetUserByEmail = function(test)
 {
@@ -61,7 +63,8 @@ exports.testGetUserByEmail = function(test)
 /**
  * Test getting a user account record given that user's API key.
  *
- * @param {nodeunit.test} Object describing the nodeunit test currently running.
+ * @param {nodeunit.test} test Object describing the nodeunit test currently
+ *      running.
 **/
 exports.testGetUserByAPIKey = function(test)
 {
@@ -86,7 +89,8 @@ exports.testGetUserByAPIKey = function(test)
 /**
  * Test updating a user record.
  *
- * @param {nodeunit.test} Object describing the nodeunit test currently running.
+ * @param {nodeunit.test} test Object describing the nodeunit test currently
+ *      running.
 **/
 exports.testPutUser = function(test)
 {
@@ -117,15 +121,15 @@ exports.testPutUser = function(test)
 /**
  * Test reporting that an account executed a query without error.
  *
- * @param {nodeunit.test} Object describing the nodeunit test currently running.
+ * @param {nodeunit.test} test Object describing the nodeunit test currently
+ *      running.
 **/
 exports.testReportUsageNoError = function(test)
 {
     mock_mongo_client.prepareForNextUse();
-    var testUser = {email: TEST_EMAIL, apiKey: TEST_API_KEY};
     var query = {recordID: 12345};
 
-    account_db_facade.reportUsage(testUser, query).then(function(){
+    account_db_facade.reportUsage(TEST_API_KEY, query).then(function(){
         test.equal(retRecord.apiKey, TEST_API_KEY);
         test.deepEqual(retRecord.query, query);
         test.equal(retRecord.error, null);
@@ -144,15 +148,15 @@ exports.testReportUsageNoError = function(test)
 /**
  * Test reporting that an account executed a query with an error.
  *
- * @param {nodeunit.test} Object describing the nodeunit test currently running.
+ * @param {nodeunit.test} test Object describing the nodeunit test currently
+ *      running.
 **/
 exports.testReportUsageError = function(test)
 {
     mock_mongo_client.prepareForNextUse();
-    var testUser = {email: TEST_EMAIL, apiKey: TEST_API_KEY};
     var query = {recordID: 12345};
 
-    account_db_facade.reportUsage(testUser, query, 'test error')
+    account_db_facade.reportUsage(TEST_API_KEY, query, 'test error')
     .then(function(){
         test.equal(retRecord.apiKey, TEST_API_KEY);
         test.deepEqual(retRecord.query, query);
@@ -174,7 +178,8 @@ exports.testReportUsageError = function(test)
 /**
  * Test querying for a user's account activity by her API key.
  *
- * @param {nodeunit.Test} Object describing the nodeunit test currently running.
+ * @param {nodeunit.Test} test Object describing the nodeunit test currently
+ *      running.
 **/
 exports.testFindAPIKeyUsage = function(test)
 {
@@ -218,7 +223,8 @@ exports.testFindAPIKeyUsage = function(test)
 /**
  * Test removing old account usage records, including those with errors.
  *
- * @param {nodeunit.Test} Object describing the nodeunit test currently running.
+ * @param {nodeunit.Test} test Object describing the nodeunit test currently
+ *      running.
 **/
 exports.testFindAPIKeyUsageRemoveErrors = function(test)
 {
@@ -249,7 +255,8 @@ exports.testFindAPIKeyUsageRemoveErrors = function(test)
 /**
  * Test removing old account usage records, excluding those with errors.
  *
- * @param {nodeunit.Test} Object describing the nodeunit test currently running.
+ * @param {nodeunit.Test} test Object describing the nodeunit test currently
+ *      running.
 **/
 exports.testFindAPIKeyUsageNoRemoveErrors = function(test)
 {

@@ -73,7 +73,8 @@ exports.putUser = function(account)
  * Persist a record of a user having executed a query along with a flag
  * indicating if that user request was fulfilled successfully.
  *
- * @param {Object} account The user account for which this query was executed.
+ * @param {String} apiKey The apiKey belonging to the user that executed the
+ *      provided query.
  * @param {Object} query Query object as described in the structures article of
  *      the project wiki.
  * @param {String} error Optional parameter. Should be a description of an error
@@ -85,7 +86,7 @@ exports.putUser = function(account)
  *      write request has been made to the database. This will potentially
  *      resolve before the actual write.
 **/
-exports.reportUsage = function(account, query, error)
+exports.reportUsage = function(apiKey, query, error)
 {
 
 };
