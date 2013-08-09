@@ -10,6 +10,8 @@
  * @license GNU GPLv3
 **/
 
+var MAX_QPM = 6000;
+
 
 /**
  * Get the account record for a user with the given email address.
@@ -37,15 +39,23 @@ exports.getOrCreateUserByEmail = function(email)
  * @param {Object} account Object describing the Account that is making the
  *      given query. Should be an Account Object as described in the structures
  *      section of the project wiki.
+ * @param {Object} query Object describing the query that the user wants to
+ *      execute. Should be a Query Object as described in the structures section
+ *      of the project wiki.
+ * @return {Q.promise} Promise that resolves to true if the user can fulfill
+ *      the given query and false otherwise.
 **/
-exports.canFulfillQuery = function(account)
+exports.canFulfillQuery = function(account, query)
 {
 
 };
 
 
 /**
- * Log a request executed on behalf of a user.
+ * Log a user request and clean up that user's old log entries.
+ *
+ * Log a request executed on behalf of a user and remove old log entries that
+ * executed without error.
  *
  * @param {Object} account Object with account information for the user that
  *      executed the given request. See the Account Object structure in the
@@ -56,7 +66,7 @@ exports.canFulfillQuery = function(account)
  *      while fulfilling this user's request (executing the provided query for
  *      the provided user).
 **/ 
-exports.recordFulfilledQuery = function(account, query, error)
+exports.updateAccountLog = function(account, query, error)
 {
     
 };
