@@ -120,6 +120,6 @@ exports.format = function(format, corpus, fields, label)
   } else if (format == 'json') {
     return formatAsJSON(corpus, fields, label);
   } else {
-    return Q.fcall(function() { throw new Error("Unknown format: " + format_)})
+    return Q.fcall(function() { throw new Error("Unknown format: " + format_); });
   }
 };
