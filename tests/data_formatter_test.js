@@ -59,7 +59,7 @@ exports.testFormatJSON = function(test)
     data_formatter.format('json', testCorpus, fields, 'testObjs')
     .then(function(jsonStr)
     {
-        test.deepEqual(JSON.parse(jsonStr), testCorpus);
+        test.deepEqual(JSON.parse(jsonStr), expectedObj);
         test.done();
     });
 };
