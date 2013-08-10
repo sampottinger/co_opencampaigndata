@@ -9,6 +9,8 @@
  * @license GNU GPL v3
 **/
 
+var Q = require('q');
+
 // Listing of available serialization routines.
 var serializationStrategies = {
     'csv': formatAsCSV,
@@ -33,7 +35,29 @@ var serializationStrategies = {
 **/
 function formatAsCSV(corpus, fields, ununsedLabel)
 {
-
+  return Q.fcall(function() {
+    var i = 0,
+        j = 0,
+        corpus_len = 0,
+        fields_len = 0,
+        rows = [],
+        columns = [],
+        csv_str = "";
+  // Set up header.
+    rows.push(fields);
+    for(i = 0, corpus_len = corpus.length; i < corpus_len; ++i) {
+      columns = [];
+      for(j = 0, fields_len = fields.length; j < fields_len; ++j) {
+        if(typeof(corpus[i][fields[j]]) == "number") {
+          columns.push(corpus[i][fields[j]]);
+        } else {
+          columns.push('"' + corpus[i][fields[j]] + '"');
+        }
+      }
+      rows.push(columns.join(','));
+    }
+    return rows.join("\n");
+  });
 }
 
 
@@ -51,7 +75,23 @@ function formatAsCSV(corpus, fields, ununsedLabel)
 **/
 function formatAsJSON(corpus, fields, label)
 {
-
+  return Q.fcall(function() {
+    var i = 0,
+        j = 0,
+        corpus_len = 0,
+        fields_len = 0,
+        item = {},
+        json_obj = {};
+    json_obj[label] = [];
+    for(i = 0, corpus_len = corpus.length; i < corpus_len; ++i) {
+      item = {};
+      for(j = 0, fields_len = fields.length; j < fields_len; ++j) {
+        item[fields[j]] = corpus[i][fields[j]];
+      }
+      json_obj[label].push(item);
+    }
+    return JSON.stringify(json_obj);
+  });
 }
 
 
@@ -75,5 +115,11 @@ function formatAsJSON(corpus, fields, label)
 **/
 exports.format = function(format, corpus, fields, label)
 {
-
+  if (format == 'csv') {
+    return formatAsCSV(corpus, fields);
+  } else if (format == 'json') {
+    return formatAsJSON(corpus, fields, label);
+  } else {
+    return Q.fcall(function() { throw new Error("Unknown format: " + format_)})
+  }
 };
