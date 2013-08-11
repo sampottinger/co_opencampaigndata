@@ -192,11 +192,8 @@ exports.updateAccountLog = function(account, query, error)
     };
 
     var removeOldEntries = function () {
-        return account_db_facade.removeOldUsageRecords(
-            apiKey,
-            removeEntriesBeforeDate,
-            false
-        );
+        return account_db_facade.removeOldUsageRecords(apiKey,
+            removeEntriesBeforeDate, false);
     };
 
     reportUsage()

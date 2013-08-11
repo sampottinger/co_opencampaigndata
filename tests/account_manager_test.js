@@ -51,10 +51,8 @@ exports.testCreateUserByEmail = function(test)
     account_manager.getOrCreateUserByEmail(TEST_EMAIL).then(function (account)
     {
         test.equal(account.email, TEST_EMAIL);
-
         test.ok(getByEmailStub.calledWith(TEST_EMAIL));
         test.ok(putUserStub.calledWith(emailMatch));
-
         test.done();
     })
     .fail(function (error) { throw new Error(error); } )
@@ -88,7 +86,6 @@ exports.testGetUserByEmail = function(test)
     {
         test.equal(account.email, TEST_EMAIL);
         test.ok(getByEmailStub.calledWith(TEST_EMAIL));
-
         test.done();
     })
     .fail(function (error) { throw new Error(error); } )
@@ -196,11 +193,8 @@ exports.testCanFulfillQueryDates = function(test)
     account_manager.canFulfillQuery(partialAccount, partialQuery)
     .then(function (canFulfillQuery)
     {
-        var matchingDates = findAPIKeyUsageStub.calledWith(
-            TEST_API_KEY,
-            startDateMatch,
-            endDateMatch
-        );
+        var matchingDates = findAPIKeyUsageStub.calledWith(TEST_API_KEY,
+            startDateMatch, endDateMatch);
         test.ok(matchingDates);
         test.done();
     })
