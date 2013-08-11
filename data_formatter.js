@@ -41,7 +41,7 @@ function formatAsCSV(corpus, fields, ununsedLabel)
         corpusLen = 0,
         fieldsLen = 0,
         rows = [],
-        columns = [],
+        columns = [];
     // Set up header.
     rows.push(fields);
     for(i = 0, corpusLen = corpus.length; i < corpusLen; ++i) {
