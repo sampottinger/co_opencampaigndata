@@ -36,27 +36,26 @@ var serializationStrategies = {
 function formatAsCSV(corpus, fields, ununsedLabel)
 {
   return Q.fcall(function() {
-    var i = 0,
-        j = 0,
-        corpus_len = 0,
-        fields_len = 0,
-        rows = [],
-        columns = [],
-        csv_str = "";
-  // Set up header.
-    rows.push(fields);
-    for(i = 0, corpus_len = corpus.length; i < corpus_len; ++i) {
-      columns = [];
-      for(j = 0, fields_len = fields.length; j < fields_len; ++j) {
-        if(typeof(corpus[i][fields[j]]) == "number") {
-          columns.push(corpus[i][fields[j]]);
-        } else {
-          columns.push('"' + corpus[i][fields[j]] + '"');
-        }
+      var i = 0,
+          j = 0,
+          corpusLen = 0,
+          fieldsLen = 0,
+          rows = [],
+          columns = [];
+      // Set up header.
+      rows.push(fields);
+      for(i = 0, corpusLen = corpus.length; i < corpusLen; ++i) {
+          columns = [];
+          for(j = 0, fieldsLen = fields.length; j < fieldsLen; ++j) {
+              if(typeof(corpus[i][fields[j]]) == 'number') {
+                  columns.push(corpus[i][fields[j]]);
+              } else {
+                  columns.push('"' + corpus[i][fields[j]] + '"');
+              }
+          }
+          rows.push(columns.join(','));
       }
-      rows.push(columns.join(','));
-    }
-    return rows.join("\n");
+      return rows.join('\n');
   });
 }
 
@@ -75,23 +74,23 @@ function formatAsCSV(corpus, fields, ununsedLabel)
 **/
 function formatAsJSON(corpus, fields, label)
 {
-  return Q.fcall(function() {
-    var i = 0,
-        j = 0,
-        corpus_len = 0,
-        fields_len = 0,
-        item = {},
-        json_obj = {};
-    json_obj[label] = [];
-    for(i = 0, corpus_len = corpus.length; i < corpus_len; ++i) {
-      item = {};
-      for(j = 0, fields_len = fields.length; j < fields_len; ++j) {
-        item[fields[j]] = corpus[i][fields[j]];
+    return Q.fcall(function() {
+      var i = 0,
+          j = 0,
+          corpusLen = 0,
+          fieldsLen = 0,
+          item = {},
+          jsonObj = {};
+      jsonObj[label] = [];
+      for(i = 0, corpusLen = corpus.length; i < corpusLen; ++i) {
+          item = {};
+          for(j = 0, fieldsLen = fields.length; j < fieldsLen; ++j) {
+              item[fields[j]] = corpus[i][fields[j]];
+          }
+          jsonObj[label].push(item);
       }
-      json_obj[label].push(item);
-    }
-    return JSON.stringify(json_obj);
-  });
+      return JSON.stringify(jsonObj);
+    });
 }
 
 
@@ -115,11 +114,14 @@ function formatAsJSON(corpus, fields, label)
 **/
 exports.format = function(format, corpus, fields, label)
 {
-  if (format == 'csv') {
-    return formatAsCSV(corpus, fields);
-  } else if (format == 'json') {
-    return formatAsJSON(corpus, fields, label);
-  } else {
-    return Q.fcall(function() { throw new Error("Unknown format: " + format_); });
-  }
+    var strategy = serializationStrategies[format];
+    if(strategy === undefined)
+    {
+        var notFoundError = new Error('Unknown format: ' + format);
+        return Q.fcall(function() { throw notFoundError; });
+    }
+    else
+    {
+        return strategy(corpus, fields, label);
+    }
 };
