@@ -268,8 +268,13 @@ exports.testUpdateAccountLogError = function(test)
     account_manager.updateAccountLog(partialAccount, partialQuery, testError)
     .then(function()
     {
-        reportUsageStub.calledWith(partialAccount, partialQuery, testError);
-        removeStub.calledWith(TEST_API_KEY, endDateMatch, false);
+        var rightRemoveParams = removeStub.calledWith(TEST_API_KEY,
+            endDateMatch, false);
+        var rightReportParams = reportUsageStub.calledWith(TEST_API_KEY,
+            partialQuery, testError);
+        
+        test.ok(rightRemoveParams);
+        test.ok(rightReportParams);
         test.done();
     })
     .fail(function (error) { throw new Error(error); })
