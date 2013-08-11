@@ -36,26 +36,26 @@ var serializationStrategies = {
 function formatAsCSV(corpus, fields, ununsedLabel)
 {
   return Q.fcall(function() {
-    var i = 0,
-        j = 0,
-        corpusLen = 0,
-        fieldsLen = 0,
-        rows = [],
-        columns = [];
-    // Set up header.
-    rows.push(fields);
-    for(i = 0, corpusLen = corpus.length; i < corpusLen; ++i) {
-      columns = [];
-      for(j = 0, fieldsLen = fields.length; j < fieldsLen; ++j) {
-        if(typeof(corpus[i][fields[j]]) == 'number') {
-          columns.push(corpus[i][fields[j]]);
-        } else {
-          columns.push('"' + corpus[i][fields[j]] + '"');
-        }
+      var i = 0,
+          j = 0,
+          corpusLen = 0,
+          fieldsLen = 0,
+          rows = [],
+          columns = [];
+      // Set up header.
+      rows.push(fields);
+      for(i = 0, corpusLen = corpus.length; i < corpusLen; ++i) {
+          columns = [];
+          for(j = 0, fieldsLen = fields.length; j < fieldsLen; ++j) {
+              if(typeof(corpus[i][fields[j]]) == 'number') {
+                  columns.push(corpus[i][fields[j]]);
+              } else {
+                  columns.push('"' + corpus[i][fields[j]] + '"');
+              }
+          }
+          rows.push(columns.join(','));
       }
-      rows.push(columns.join(','));
-    }
-    return rows.join('\n');
+      return rows.join('\n');
   });
 }
 
@@ -74,23 +74,23 @@ function formatAsCSV(corpus, fields, ununsedLabel)
 **/
 function formatAsJSON(corpus, fields, label)
 {
-  return Q.fcall(function() {
-    var i = 0,
-        j = 0,
-        corpusLen = 0,
-        fieldsLen = 0,
-        item = {},
-        jsonObj = {};
-    jsonObj[label] = [];
-    for(i = 0, corpusLen = corpus.length; i < corpusLen; ++i) {
-      item = {};
-      for(j = 0, fieldsLen = fields.length; j < fieldsLen; ++j) {
-        item[fields[j]] = corpus[i][fields[j]];
+    return Q.fcall(function() {
+      var i = 0,
+          j = 0,
+          corpusLen = 0,
+          fieldsLen = 0,
+          item = {},
+          jsonObj = {};
+      jsonObj[label] = [];
+      for(i = 0, corpusLen = corpus.length; i < corpusLen; ++i) {
+          item = {};
+          for(j = 0, fieldsLen = fields.length; j < fieldsLen; ++j) {
+              item[fields[j]] = corpus[i][fields[j]];
+          }
+          jsonObj[label].push(item);
       }
-      jsonObj[label].push(item);
-    }
-    return JSON.stringify(jsonObj);
-  });
+      return JSON.stringify(jsonObj);
+    });
 }
 
 
