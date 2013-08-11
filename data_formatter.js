@@ -43,7 +43,7 @@ function formatAsCSV(corpus, fields, ununsedLabel)
         rows = [],
         columns = [],
         csv_str = "";
-  // Set up header.
+    // Set up header.
     rows.push(fields);
     for(i = 0, corpus_len = corpus.length; i < corpus_len; ++i) {
       columns = [];
@@ -115,11 +115,14 @@ function formatAsJSON(corpus, fields, label)
 **/
 exports.format = function(format, corpus, fields, label)
 {
-  if (format == 'csv') {
-    return formatAsCSV(corpus, fields);
-  } else if (format == 'json') {
-    return formatAsJSON(corpus, fields, label);
-  } else {
-    return Q.fcall(function() { throw new Error("Unknown format: " + format_); });
-  }
+    var strategy = serializationStrategies[format];
+    if(strategy === undefined)
+    {
+        var notFoundError = new Error("Unknown format: " + format_);
+        return Q.fcall(function() { throw notFoundError; });
+    }
+    else
+    {
+        return strategy(corpus, fields, label);
+    }
 };
