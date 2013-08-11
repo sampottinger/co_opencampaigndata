@@ -42,13 +42,12 @@ function formatAsCSV(corpus, fields, ununsedLabel)
         fieldsLen = 0,
         rows = [],
         columns = [],
-        csv_str = "";
     // Set up header.
     rows.push(fields);
     for(i = 0, corpusLen = corpus.length; i < corpusLen; ++i) {
       columns = [];
       for(j = 0, fieldsLen = fields.length; j < fieldsLen; ++j) {
-        if(typeof(corpus[i][fields[j]]) == "number") {
+        if(typeof(corpus[i][fields[j]]) == 'number') {
           columns.push(corpus[i][fields[j]]);
         } else {
           columns.push('"' + corpus[i][fields[j]] + '"');
@@ -56,7 +55,7 @@ function formatAsCSV(corpus, fields, ununsedLabel)
       }
       rows.push(columns.join(','));
     }
-    return rows.join("\n");
+    return rows.join('\n');
   });
 }
 
@@ -81,16 +80,16 @@ function formatAsJSON(corpus, fields, label)
         corpusLen = 0,
         fieldsLen = 0,
         item = {},
-        json_obj = {};
-    json_obj[label] = [];
+        jsonObj = {};
+    jsonObj[label] = [];
     for(i = 0, corpusLen = corpus.length; i < corpusLen; ++i) {
       item = {};
       for(j = 0, fieldsLen = fields.length; j < fieldsLen; ++j) {
         item[fields[j]] = corpus[i][fields[j]];
       }
-      json_obj[label].push(item);
+      jsonObj[label].push(item);
     }
-    return JSON.stringify(json_obj);
+    return JSON.stringify(jsonObj);
   });
 }
 
@@ -118,7 +117,7 @@ exports.format = function(format, corpus, fields, label)
     var strategy = serializationStrategies[format];
     if(strategy === undefined)
     {
-        var notFoundError = new Error("Unknown format: " + format_);
+        var notFoundError = new Error('Unknown format: ' + format);
         return Q.fcall(function() { throw notFoundError; });
     }
     else
