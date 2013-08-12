@@ -55,7 +55,7 @@ exports.testCreateUserByEmail = function(test)
         test.ok(putUserStub.calledWith(emailMatch));
         test.done();
     })
-    .fail(function (error) { throw new Error(error); } )
+    .fail(function (error) { testUtil.reportAsyncError(test, error); } )
     .fin(function () {
         getByKeyStub.restore();
         getByEmailStub.restore();
@@ -88,7 +88,7 @@ exports.testGetUserByEmail = function(test)
         test.ok(getByEmailStub.calledWith(TEST_EMAIL));
         test.done();
     })
-    .fail(function (error) { throw new Error(error); } )
+    .fail(function (error) { testUtil.reportAsyncError(test, error); } )
     .fin(function () {
         getByEmailStub.restore();
         putUserStub.restore();
@@ -122,7 +122,7 @@ exports.testCanFulfillQuery = function(test)
         test.equal(canFulfillQuery, true);
         test.done();
     })
-    .fail(function (error) { throw new Error(error); } )
+    .fail(function (error) { testUtil.reportAsyncError(test, error); } )
     .fin(function () {
         findAPIKeyUsageStub.restore();
     });
@@ -155,7 +155,7 @@ exports.testCannotFulfillQuery = function(test)
         test.equal(canFulfillQuery, false);
         test.done();
     })
-    .fail(function (error) { throw new Error(error); } )
+    .fail(function (error) { testUtil.reportAsyncError(test, error); } )
     .fin(function () {
         findAPIKeyUsageStub.restore();
     });
@@ -198,7 +198,7 @@ exports.testCanFulfillQueryDates = function(test)
         test.ok(matchingDates);
         test.done();
     })
-    .fail(function (error) { throw new Error(error); } )
+    .fail(function (error) { testUtil.reportAsyncError(test, error); } )
     .fin(function () {
         findAPIKeyUsageStub.restore();
         clock.restore();
@@ -234,7 +234,7 @@ exports.testUpdateAccountLog = function(test)
         test.ok(removeStub.calledWith(TEST_API_KEY, endDateMatch, false));
         test.done();
     })
-    .fail(function (error) { throw new Error(error); })
+    .fail(function (error) { testUtil.reportAsyncError(test, error); })
     .fin(function () {
         reportUsageStub.restore();
         removeStub.restore();
@@ -277,7 +277,7 @@ exports.testUpdateAccountLogError = function(test)
         test.ok(rightReportParams);
         test.done();
     })
-    .fail(function (error) { throw new Error(error); })
+    .fail(function (error) { testUtil.reportAsyncError(test, error); })
     .fin(function () {
         reportUsageStub.restore();
         removeStub.restore();
