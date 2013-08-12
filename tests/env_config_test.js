@@ -67,7 +67,7 @@ function FakeFile(err, contents)
         return function (src, encoding, callback) {
             target.readFile(src, encoding, callback);
         };
-    }
+    };
 }
 
 
