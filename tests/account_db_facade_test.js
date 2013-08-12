@@ -13,6 +13,7 @@ var q = require('q');
 var rewire = require('rewire');
 
 var mock_mongodb = require('./mock_mongodb');
+var test_util = require('./test_util');
 
 var TEST_EMAIL = 'user@test.com';
 var TEST_API_KEY = 'testapikey';
@@ -56,6 +57,15 @@ loggingDBPool.drain(function(){ loggingDBPool.destroyAllNow(); });
 
 module.exports = {
 
+    /**
+     * Create new database connection pools ahead of each unit test.
+     *
+     * Create database connection pools ahead of each unit test to prevent
+     * errors in one test from causing another test to fail.
+     *
+     * @param {function} callback Standard callback from nodeunit to call after
+     *      test setup logic has finished.
+    **/
     setUp: function(callback)
     {
         account_db_facade.__set__('accountDBPool', createAccountDBPool());
@@ -63,6 +73,15 @@ module.exports = {
         callback();
     },
 
+     /**
+     * Drain the database connection pool at the end of each unit test.
+     *
+     * Drain the database connection pool at the end of each unit test to
+     * prevent errors in one test from causing another test to fail.
+     *
+     * @param {function} callback Standard callback from nodeunit to call after
+     *      test tear down logic has finished.
+    **/
     tearDown: function(callback)
     {
         var accountDBPool = account_db_facade.__get__('accountDBPool');
@@ -98,10 +117,7 @@ module.exports = {
 
             test.done();
         })
-        .fail(function (error) {
-            test.ok(false, error);
-            test.done();
-        });
+        .fail(function (error) { test_util.reportAsyncError(test, error); });
     },
 
 
@@ -115,7 +131,8 @@ module.exports = {
     {
         mock_mongo_client.prepareForNextUse({email: TEST_EMAIL});
 
-        account_db_facade.getUserByAPIKey(TEST_API_KEY).then(function(retAccount){
+        account_db_facade.getUserByAPIKey(TEST_API_KEY)
+        .then(function(retAccount){
             test.equal(retAccount.email, TEST_EMAIL);
 
             test.deepEqual(mock_mongo_client.getLastSelector(),
@@ -128,10 +145,7 @@ module.exports = {
 
             test.done();
         })
-        .fail(function (error) {
-            test.ok(false, error);
-            test.done();
-        });
+        .fail(function (error) { test_util.reportAsyncError(test, error); });
     },
 
 
@@ -164,10 +178,7 @@ module.exports = {
 
             test.done();
         })
-        .fail(function (error) {
-            test.ok(false, error);
-            test.done();
-        });
+        .fail(function (error) { test_util.reportAsyncError(test, error); });
     },
 
 
@@ -196,10 +207,7 @@ module.exports = {
 
             test.done();
         })
-        .fail(function (error) {
-            test.ok(false, error);
-            test.done();
-        });
+        .fail(function (error) { test_util.reportAsyncError(test, error); });
     },
 
 
@@ -230,10 +238,7 @@ module.exports = {
 
             test.done();
         })
-        .fail(function (error) {
-            test.ok(false, error);
-            test.done();
-        });
+        .fail(function (error) { test_util.reportAsyncError(test, error); });
     },
 
 
@@ -279,10 +284,7 @@ module.exports = {
 
             test.done();
         })
-        .fail(function (error) {
-            test.ok(false, error);
-            test.done();
-        });
+        .fail(function (error) { test_util.reportAsyncError(test, error); });
     },
 
 
@@ -314,10 +316,7 @@ module.exports = {
             test.done();
 
         })
-        .fail(function (error) {
-            test.ok(false, error);
-            test.done();
-        });
+        .fail(function (error) { test_util.reportAsyncError(test, error); });
     },
 
 
@@ -350,10 +349,7 @@ module.exports = {
 
             test.done();
         })
-        .fail(function (error) {
-            test.ok(false, error);
-            test.done();
-        });
+        .fail(function (error) { test_util.reportAsyncError(test, error); });
     }
 
 };

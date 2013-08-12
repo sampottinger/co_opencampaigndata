@@ -1,3 +1,11 @@
+/**
+ * Logic for reading environment configuration settings.
+ *
+ * @author Sam Pottinger (samnsparky, http://gleap.org)
+ * @license GNU GPL v3
+**/
+
+
 var fs = require('fs');
 var q = require('q');
 
@@ -19,7 +27,7 @@ exports.loadConfig = function () {
         fs.readFile(CONFIG_FILE_SRC, 'utf8', function (err,data) {
             if (err) {
                 var message = 'Could not load configuration settings: ' + err;
-                throw new Error(message);
+                deferred.reject(new Error(message));
             }
             loadedConfiguration = JSON.parse(data);
             deferred.resolve(loadedConfiguration);
