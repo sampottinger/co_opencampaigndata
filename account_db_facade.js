@@ -48,12 +48,15 @@ function createAccountDBPool()
     return generic_pool.Pool({
         name: 'mongodb-account',
         create: function(createCallback) {
-            mongodb.MongoClient.connect(
-                'envSettings.ACCOUNT_DB_URI',
-                function (err, db) { 
-                    createCallback(null, db); 
-                }
-            );
+            env_config.loadConfig().then(function(envSettings)
+            {
+                mongodb.MongoClient.connect(
+                    envSettings.ACCOUNT_DB_URI,
+                    function (err, db) { 
+                        createCallback(null, db); 
+                    }
+                );
+            });
         },
         destroy: function(db) { db.close(); },
         max: MAX_DB_CONNECTIONS,
@@ -73,12 +76,15 @@ function createLoggingDBPool()
     return generic_pool.Pool({
         name: 'mongodb-logging',
         create: function(callback) {
-            mongodb.MongoClient.connect(
-                'envSettings.USAGES_DB_URI',
-                function (err, db) {
-                    callback(err, db);
-                }
-            );
+            env_config.loadConfig().then(function(envSettings)
+            {
+                mongodb.MongoClient.connect(
+                    envSettings.LOGGING_DB_URI,
+                    function (err, db) { 
+                        callback(null, db); 
+                    }
+                );
+            });
         },
         destroy: function(db) { db.close(); },
         max: MAX_DB_CONNECTIONS,
