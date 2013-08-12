@@ -28,7 +28,7 @@ mock_mongo_client = new mock_mongodb.MockMongoClient();
 // Dependency injection for runtime environment
 var replacementConfig = {
     ACCOUNT_DB_URI: TEST_ACCOUNT_DB_URI,
-    USAGES_DB_URI: TEST_USAGES_DB_URI
+    LOGGING_DB_URI: TEST_USAGES_DB_URI
 };
 var replacementLoadConfig = function () {
     var deferred = q.defer();
@@ -109,7 +109,7 @@ module.exports = {
 
             test.deepEqual(mock_mongo_client.getLastSelector(),
                 {email: TEST_EMAIL});
-            //test.equal(mock_mongo_client.getLastURI(), TEST_ACCOUNT_DB_URI);
+            test.equal(mock_mongo_client.getLastURI(), TEST_ACCOUNT_DB_URI);
             test.equal(mock_mongo_client.getLastCollectionName(),
                 TEST_ACCOUNT_COLLECTION);
 
@@ -137,7 +137,7 @@ module.exports = {
 
             test.deepEqual(mock_mongo_client.getLastSelector(),
                 {apiKey: TEST_API_KEY});
-            //test.equal(mock_mongo_client.getLastURI(), TEST_ACCOUNT_DB_URI);
+            test.equal(mock_mongo_client.getLastURI(), TEST_ACCOUNT_DB_URI);
             test.equal(mock_mongo_client.getLastCollectionName(),
                 TEST_ACCOUNT_COLLECTION);
 
@@ -165,7 +165,7 @@ module.exports = {
 
             test.deepEqual(mock_mongo_client.getLastSelector(),
                 {email: TEST_EMAIL});
-            //test.equal(mock_mongo_client.getLastURI(), TEST_ACCOUNT_DB_URI);
+            test.equal(mock_mongo_client.getLastURI(), TEST_ACCOUNT_DB_URI);
             test.equal(mock_mongo_client.getLastCollectionName(),
                 TEST_ACCOUNT_COLLECTION);
             
@@ -199,7 +199,7 @@ module.exports = {
             test.deepEqual(retRecord.query, query);
             test.equal(retRecord.error, null);
 
-            //test.equal(mock_mongo_client.getLastURI(), TEST_USAGES_DB_URI);
+            test.equal(mock_mongo_client.getLastURI(), TEST_USAGES_DB_URI);
             test.equal(mock_mongo_client.getLastCollectionName(),
                 TEST_USAGE_COLLECTION);
 
@@ -228,7 +228,7 @@ module.exports = {
             test.deepEqual(retRecord.query, query);
             test.equal(retRecord.error, 'test error');
 
-            //test.equal(mock_mongo_client.getLastURI(), TEST_USAGES_DB_URI);
+            test.equal(mock_mongo_client.getLastURI(), TEST_USAGES_DB_URI);
             test.equal(mock_mongo_client.getLastCollectionName(),
                 TEST_USAGE_COLLECTION);
 
@@ -276,7 +276,7 @@ module.exports = {
             test.equal(lastSelector.createdOn['$gt'], startDate);
             test.equal(lastSelector.createdOn['$lt'], endDate);
 
-            //test.equal(mock_mongo_client.getLastURI(), TEST_USAGES_DB_URI);
+            test.equal(mock_mongo_client.getLastURI(), TEST_USAGES_DB_URI);
             test.equal(mock_mongo_client.getLastCollectionName(),
                 TEST_USAGE_COLLECTION);
 
@@ -307,7 +307,7 @@ module.exports = {
             test.equal(lastSelector.apiKey, TEST_API_KEY);
             test.equal(lastSelector.createdOn['$lt'], endDate);
 
-            //test.equal(mock_mongo_client.getLastURI(), TEST_USAGES_DB_URI);
+            test.equal(mock_mongo_client.getLastURI(), TEST_USAGES_DB_URI);
             test.equal(mock_mongo_client.getLastCollectionName(),
                 TEST_USAGE_COLLECTION);
 
@@ -341,7 +341,7 @@ module.exports = {
                 error: null
             });
 
-            //test.equal(mock_mongo_client.getLastURI(), TEST_USAGES_DB_URI);
+            test.equal(mock_mongo_client.getLastURI(), TEST_USAGES_DB_URI);
             test.equal(mock_mongo_client.getLastCollectionName(),
                 TEST_USAGE_COLLECTION);
 
