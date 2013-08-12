@@ -24,6 +24,20 @@ var ADMIN_USER = 'admin_user';
 
 
 /**
+ * Simple error handler for asynchronous error handeling.
+ *
+ * Simple error handler that re-raises the provided error. Helps with Q and
+ * promises having exceptions thrown out silently unless explicity re-raised.
+ *
+ * @param {Error} err The error message to raise a new error with.
+**/
+function genericErrorHandler(err)
+{
+    throw new err;
+}
+
+
+/**
  * Generate a random string of the given length.
  *
  * @param {Number} length Integer length of the string to generate.
@@ -115,11 +129,9 @@ exports.getOrCreateUserByEmail = function(email)
 
         // Generate an new unique API key and create account.
         generateNewAPIKey()
-        .then(createNewAccountWithEmail)
-        .then(deferred.resolve)
-        .fail(function (error) {
-            throw new Error('Error while creating account: ' + error);
-        });
+        .then(createNewAccountWithEmail, genericErrorHandler)
+        .then(deferred.resolve, genericErrorHandler)
+        .fail(genericErrorHandler);
 
     }).fail( function (error) { throw new Error(error); });
 
@@ -152,10 +164,8 @@ exports.canFulfillQuery = function(account, query)
     account_db_facade.findAPIKeyUsage(account.apiKey,lastMinute,now)
     .then(function (activity) {
         deferred.resolve(activity.length < MAX_QPM);
-    })
-    .fail(function (error) {
-        throw new Error('Failed checking account usage: ' + error);
-    });
+    }, genericErrorHandler)
+    .fail(genericErrorHandler);
 
     return deferred.promise;
 };
@@ -197,11 +207,9 @@ exports.updateAccountLog = function(account, query, error)
     };
 
     reportUsage()
-    .then(removeOldEntries)
-    .then(deferred.resolve)
-    .fail(function (error) {
-        throw new Error('Failed updating account log: ' + error);
-    });
+    .then(removeOldEntries, genericErrorHandler)
+    .then(deferred.resolve, genericErrorHandler)
+    .fail(genericErrorHandler);
 
     return deferred.promise;
 };
