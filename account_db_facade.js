@@ -500,7 +500,7 @@ function decorateForDatabase(targetFunction, database, collection, context)
         acquireStrategy()
         .then(executeDBOperations, throwError)
         .then(releaseStrategy, throwError)
-        .fail(throwError)
+        .fail(throwError);
 
         return deferred.promise;
     };
