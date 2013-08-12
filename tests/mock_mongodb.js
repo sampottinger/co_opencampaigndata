@@ -81,7 +81,10 @@ function MockMongoClient()
                     }
                 };
 
-                callback(null, mockedStream);
+                if(callback !== undefined)
+                    callback(null, mockedStream);
+                else
+                    return mockedStream;
             },
 
             // Provide mocked version of findOne
@@ -134,6 +137,7 @@ function MockMongoClient()
             {
                 lastSelector = selector;
                 lastOptions = options;
+                lastOperation = 'remove';
 
                 if(callback !== undefined)
                 {

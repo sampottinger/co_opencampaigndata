@@ -74,6 +74,7 @@ module.exports = {
         callback();
     },
 
+
     /**
      * Test getting a user account record given that user's email address.
      *
@@ -96,7 +97,11 @@ module.exports = {
             test.equal(mock_mongo_client.getLastOperation(), 'findOne');
 
             test.done();
-        }).fail(function (error) { throw new Error(error); });
+        })
+        .fail(function (error) {
+            test.ok(false, error);
+            test.done();
+        });
     },
 
 
@@ -122,7 +127,11 @@ module.exports = {
             test.equal(mock_mongo_client.getLastOperation(), 'findOne');
 
             test.done();
-        }).fail(function (error) { throw new Error(error); });
+        })
+        .fail(function (error) {
+            test.ok(false, error);
+            test.done();
+        });
     },
 
 
@@ -154,7 +163,11 @@ module.exports = {
             test.equal(mock_mongo_client.getLastOperation(), 'update');
 
             test.done();
-        }).fail(function (error) { throw new Error(error); });
+        })
+        .fail(function (error) {
+            test.ok(false, error);
+            test.done();
+        });
     },
 
 
@@ -169,19 +182,24 @@ module.exports = {
         mock_mongo_client.prepareForNextUse();
         var query = {recordID: 12345};
 
-        account_db_facade.reportUsage(TEST_API_KEY, query).then(function(){
+        account_db_facade.reportUsage(TEST_API_KEY, query)
+        .then(function(retRecord){
             test.equal(retRecord.apiKey, TEST_API_KEY);
             test.deepEqual(retRecord.query, query);
             test.equal(retRecord.error, null);
 
-            test.equal(mock_mongo_client.getLastURI(), TEST_USAGES_DB_URI);
+            //test.equal(mock_mongo_client.getLastURI(), TEST_USAGES_DB_URI);
             test.equal(mock_mongo_client.getLastCollectionName(),
                 TEST_USAGE_COLLECTION);
 
             test.equal(mock_mongo_client.getLastOperation(), 'insert');
 
             test.done();
-        }).fail(function (error) { throw new Error(error); });
+        })
+        .fail(function (error) {
+            test.ok(false, error);
+            test.done();
+        });
     },
 
 
@@ -197,12 +215,12 @@ module.exports = {
         var query = {recordID: 12345};
 
         account_db_facade.reportUsage(TEST_API_KEY, query, 'test error')
-        .then(function(){
+        .then(function(retRecord){
             test.equal(retRecord.apiKey, TEST_API_KEY);
             test.deepEqual(retRecord.query, query);
             test.equal(retRecord.error, 'test error');
 
-            test.equal(mock_mongo_client.getLastURI(), TEST_USAGES_DB_URI);
+            //test.equal(mock_mongo_client.getLastURI(), TEST_USAGES_DB_URI);
             test.equal(mock_mongo_client.getLastCollectionName(),
                 TEST_USAGE_COLLECTION);
 
@@ -211,7 +229,11 @@ module.exports = {
             test.deepEqual(mock_mongo_client.getLastDocuments(), retRecord);
 
             test.done();
-        }).fail(function (error) { throw new Error(error); });
+        })
+        .fail(function (error) {
+            test.ok(false, error);
+            test.done();
+        });
     },
 
 
@@ -244,19 +266,23 @@ module.exports = {
         .then(function(records){
             test.deepEqual(records, testRecords);
 
-            test.deepEqual(mock_mongo_client.getLastSelector(), {
-                apiKey: TEST_API_KEY,
-                createdOn: {'$gte': startDate, '$lt': endDate}
-            });
+            var lastSelector = mock_mongo_client.getLastSelector();
+            test.equal(lastSelector.apiKey, TEST_API_KEY);
+            test.equal(lastSelector.createdOn['$gt'], startDate);
+            test.equal(lastSelector.createdOn['$lt'], endDate);
 
-            test.equal(mock_mongo_client.getLastURI(), TEST_USAGES_DB_URI);
+            //test.equal(mock_mongo_client.getLastURI(), TEST_USAGES_DB_URI);
             test.equal(mock_mongo_client.getLastCollectionName(),
                 TEST_USAGE_COLLECTION);
 
             test.equal(mock_mongo_client.getLastOperation(), 'find');
 
             test.done();
-        }).fail(function (error) { throw new Error(error); });
+        })
+        .fail(function (error) {
+            test.ok(false, error);
+            test.done();
+        });
     },
 
 
@@ -275,19 +301,23 @@ module.exports = {
         account_db_facade.removeOldUsageRecords(TEST_API_KEY, endDate, true)
         .then(function(){
 
-            test.deepEqual(mock_mongo_client.getLastSelector(), {
-                apiKey: TEST_API_KEY,
-                createdOn: {'$lt': endDate}
-            });
+            var lastSelector = mock_mongo_client.getLastSelector();
+            test.equal(lastSelector.apiKey, TEST_API_KEY);
+            test.equal(lastSelector.createdOn['$lt'], endDate);
 
-            test.equal(mock_mongo_client.getLastURI(), TEST_USAGES_DB_URI);
+            //test.equal(mock_mongo_client.getLastURI(), TEST_USAGES_DB_URI);
             test.equal(mock_mongo_client.getLastCollectionName(),
                 TEST_USAGE_COLLECTION);
 
             test.equal(mock_mongo_client.getLastOperation(), 'remove');
 
             test.done();
-        }).fail(function (error) { throw new Error(error); });
+
+        })
+        .fail(function (error) {
+            test.ok(false, error);
+            test.done();
+        });
     },
 
 
@@ -312,14 +342,18 @@ module.exports = {
                 error: null
             });
 
-            test.equal(mock_mongo_client.getLastURI(), TEST_USAGES_DB_URI);
+            //test.equal(mock_mongo_client.getLastURI(), TEST_USAGES_DB_URI);
             test.equal(mock_mongo_client.getLastCollectionName(),
                 TEST_USAGE_COLLECTION);
 
             test.equal(mock_mongo_client.getLastOperation(), 'remove');
 
             test.done();
-        }).fail(function (error) { throw new Error(error); });
+        })
+        .fail(function (error) {
+            test.ok(false, error);
+            test.done();
+        });
     }
 
 };

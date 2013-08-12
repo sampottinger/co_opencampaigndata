@@ -220,11 +220,17 @@ function reportUsage(collection, apiKey, query, error)
 {
     var deferred = q.defer();
 
+    var newRecord = {
+        apiKey: apiKey,
+        query: query,
+        error: error,
+        createdOn: new Date()
+    };
     collection.insert(
-        {apiKey: apiKey, query: query, error: error},
+        newRecord,
         {w: 1},
         function () {
-            deferred.resolve();
+            deferred.resolve(newRecord);
         }
     );
 
@@ -235,7 +241,10 @@ function reportUsage(collection, apiKey, query, error)
 function findAPIKeyUsage(collection, apiKey, startDate, endDate)
 {
     var deferred = q.defer();
-    var searchFilter = {'$gt': startDate, '$lt': endDate};
+    var searchFilter = {
+        apiKey: apiKey,
+        createdOn: {'$gt': startDate, '$lt': endDate}
+    };
 
     collection.find(searchFilter).toArray(function (err, docs) {
         if (err) {
@@ -255,10 +264,18 @@ function removeOldUsageRecords(collection, apiKey, endDate, removeErrors)
     var deferred = q.defer();
 
     var searchFilter;
-    if (removeErrors)
-        searchFilter = {'$lt': endDate};
-    else
-        searchFilter = {'$lt': endDate, error: null};
+    if (removeErrors) {
+        searchFilter = {
+            apiKey: apiKey,
+            createdOn: {'$lt': endDate}
+        };
+    } else {
+        searchFilter = {
+            apiKey: apiKey,
+            createdOn: {'$lt': endDate},
+            error: null
+        };
+    }
     
     collection.remove(searchFilter, {w: 1}, function () {
         deferred.resolve();
@@ -411,9 +428,9 @@ exports.putUser = decorateForDatabase(
  *      user requests, exceeding request limits, server errors, or anything that
  *      caused the appliction to fail to return 200 (OK). If no error, this
  *      parameter should be left as undefined.
- * @return {Q.proimse} Promise that resovles to undefined after the asynchronous
- *      write request has been made to the database. This will potentially
- *      resolve before the actual write.
+ * @return {Q.proimse} Promise that resovles to the record being persisted after
+ *      the asynchronous write request has been made to the database. This will
+ *      potentially resolve before the actual write.
 **/
 exports.reportUsage = decorateForDatabase(
     reportUsage,
