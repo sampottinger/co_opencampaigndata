@@ -13,6 +13,329 @@
 
 var ACCOUNT_COLLECTION = 'accounts';
 var USAGE_COLLECTION = 'usages';
+var DB_TIMEOUT = 600000;
+var MAX_DB_CONNECTIONS = 5;
+
+var ACQUIRE_DB_CONNECTION_STRATEGIES = {
+    account: acquireAccountDBConnection,
+    logging: acquireLoggingDBConnection
+};
+
+var RELEASE_DB_CONNECTION_STRATEGIES = {
+    account: releaseAccountDBConnection,
+    logging: releaseLoggingDBConnection
+};
+
+var SELECT_COLLECTION_STRAGIES = {
+    account: getAccountCollection,
+    usage: getUsageCollection
+};
+
+var mongodb = require('mongodb');
+var generic_pool = require('generic-pool');
+var q = require('q');
+
+var env_config = require('./env_config');
+
+
+/**
+ * Pool for account database connections. This may be the same database as the
+ * usages database. The connected URI is controlled by the env.ACCOUNT_DB_URI
+ * environment variable.
+**/
+function createAccountDBPool()
+{
+    return generic_pool.Pool({
+        name: 'mongodb-account',
+        create: function(createCallback) {
+            mongodb.MongoClient.connect(
+                'envSettings.ACCOUNT_DB_URI',
+                function (err, db) { 
+                    createCallback(null, db); 
+                }
+            );
+        },
+        destroy: function(db) { db.close(); },
+        max: MAX_DB_CONNECTIONS,
+        idleTimeoutMillis : DB_TIMEOUT
+    });
+}
+var accountDBPool = createAccountDBPool();
+
+
+/**
+ * Pool for account database connections. This may be the same database as the
+ * usages database. The connected URI is controlled by the env.ACCOUNT_DB_URI
+ * environment variable.
+**/
+function createLoggingDBPool()
+{
+    return generic_pool.Pool({
+        name: 'mongodb-logging',
+        create: function(callback) {
+            mongodb.MongoClient.connect(
+                'envSettings.USAGES_DB_URI',
+                function (err, db) {
+                    callback(err, db);
+                }
+            );
+        },
+        destroy: function(db) { db.close(); },
+        max: MAX_DB_CONNECTIONS,
+        idleTimeoutMillis : DB_TIMEOUT
+    });
+}
+var loggingDBPool = createLoggingDBPool();
+
+
+function acquireAccountDBConnection()
+{
+    var deferred = q.defer();
+
+    accountDBPool.acquire(function (err, client) {
+        if(err)
+        {
+            var message = 'Error while acquiring account DB connection: ' + err;
+            throw new Error(message);
+        }
+        deferred.resolve(client);
+    });
+
+    return deferred.promise;
+}
+
+
+function acquireLoggingDBConnection()
+{
+    var deferred = q.defer();
+
+    loggingDBPool.acquire(function (err, client) {
+        if(err)
+        {
+            var message = 'Error while acquiring logging DB connection: ' + err;
+            throw new Error(message);
+        }
+        deferred.resolve(client);
+    });
+
+    return deferred.promise;
+}
+
+
+function releaseAccountDBConnection(connection)
+{
+    accountDBPool.release(connection);
+}
+
+
+function releaseLoggingDBConnection(connection)
+{
+    loggingDBPool.release(connection);
+}
+
+
+function getAccountCollection(connection)
+{
+    var deferred = q.defer();
+
+    connection.collection(ACCOUNT_COLLECTION, function (err, collection) {
+        deferred.resolve(collection);
+    });
+
+    return deferred.promise;
+}
+
+
+function getUsageCollection(connection)
+{
+    var deferred = q.defer();
+
+    connection.collection(USAGE_COLLECTION, function (err, collection) {
+        deferred.resolve(collection);
+    });
+
+    return deferred.promise;
+}
+
+
+function getUserByEmail(collection, email)
+{
+    var deferred = q.defer();
+
+    collection.findOne({email: email}, function (err, doc) {
+        if (err) {
+            var message = 'Error while searching for user by email: ' + err;
+            throw new Error(message);
+        }
+
+        deferred.resolve(doc);
+    });
+
+    return deferred.promise;
+}
+
+
+function getUserByAPIKey(collection, apiKey)
+{
+    var deferred = q.defer();
+
+    collection.findOne({apiKey: apiKey}, function (err, doc) {
+        if (err) {
+            var message = 'Error while searching for user by key: ' + err;
+            throw new Error(message);
+        }
+
+        deferred.resolve(doc);
+    });
+
+    return deferred.promise;
+}
+
+
+
+function putUser(collection, account)
+{
+    var deferred = q.defer();
+    var email = account.email;
+
+    collection.update(
+        {email: email},
+        account,
+        {safe: true, upsert:true},
+        function (err, count) {
+            if (err) {
+                var message = 'Error while updating user: ' + err;
+                throw new Error(message);
+            }
+
+            deferred.resolve(account);
+        }
+    );
+
+    return deferred.promise;
+}
+
+
+function reportUsage(collection, apiKey, query, error)
+{
+    var deferred = q.defer();
+
+    collection.insert(
+        {apiKey: apiKey, query: query, error: error},
+        {w: 1},
+        function () {
+            deferred.resolve();
+        }
+    );
+
+    return deferred.promise;
+}
+
+
+function findAPIKeyUsage(collection, apiKey, startDate, endDate)
+{
+    var deferred = q.defer();
+    var searchFilter = {'$gt': startDate, '$lt': endDate};
+
+    collection.find(searchFilter).toArray(function (err, docs) {
+        if (err) {
+            var message = 'Error while searching for user by email: ' + err;
+            throw new Error(message);
+        }
+
+        deferred.resolve(docs);
+    });
+
+    return deferred.promise;
+}
+
+
+function removeOldUsageRecords(collection, apiKey, endDate, removeErrors)
+{
+    var deferred = q.defer();
+
+    var searchFilter;
+    if (removeErrors)
+        searchFilter = {'$lt': endDate};
+    else
+        searchFilter = {'$lt': endDate, error: null};
+    
+    collection.remove(searchFilter, {w: 1}, function () {
+        deferred.resolve();
+    });
+
+    return deferred.promise;
+}
+
+
+function decorateForDatabase(targetFunction, database, collection, context)
+{
+    var acquireStrategy = ACQUIRE_DB_CONNECTION_STRATEGIES[database];
+    var releaseStrategy = RELEASE_DB_CONNECTION_STRATEGIES[database];
+    var collectionSelectStrategy = SELECT_COLLECTION_STRAGIES[collection];
+
+    var innerState = this;
+
+    innerState.connection = 'test';
+
+    var createTargetFunctionClosure = function (args) {
+        return function (collection) {
+            args.unshift(collection);
+            return targetFunction.apply(null, args);
+        };
+    };
+
+    var throwError = function(error)
+    {
+        var message = 'Error while ' +  context + ': ' + error;
+        message += ': ' + error.stack;
+        message += '\n\n';
+        console.log(message);
+        throw new Error(message);
+    };
+
+    var error;
+    if (acquireStrategy === undefined) {
+        error = acquireStrategy + ' not a valid DB acquisition strategy.';
+        throw new Error(error);
+    }
+
+    if (releaseStrategy === undefined) {
+        error = releaseStrategy + ' not a valid DB release strategy.';
+        throw new Error(error);
+    }
+
+    if (collectionSelectStrategy === undefined) {
+        error = collectionSelectStrategy;
+        error += ' invalid collection getter strategy.';
+        throw new Error(error);
+    }
+
+    return function () {
+        var args = Array.prototype.slice.call(arguments);
+        var deferred = q.defer();
+
+        var executeDBOperations = function(database)
+        {
+            var innerDeferred = q.defer();
+
+            collectionSelectStrategy(database)
+            .then(createTargetFunctionClosure(args), throwError)
+            .then(deferred.resolve, throwError)
+            .fail(throwError);
+
+            innerDeferred.resolve(database);
+            return innerDeferred.promise;
+        };
+
+        acquireStrategy()
+        .then(executeDBOperations, throwError)
+        .then(releaseStrategy, throwError)
+        .fail(throwError)
+
+        return deferred.promise;
+    };
+}
 
 
 /**
@@ -26,10 +349,12 @@ var USAGE_COLLECTION = 'usages';
  *      in the structures article of the project wiki or null if a matching
  *      account record could not be found.
 **/
-exports.getUserByEmail = function(email)
-{
-
-};
+exports.getUserByEmail = decorateForDatabase(
+    getUserByEmail,
+    'account',
+    'account',
+    'getting user by email'
+);
 
 
 /**
@@ -43,10 +368,12 @@ exports.getUserByEmail = function(email)
  *      in the structures article of the project wiki or null if a matching
  *      account record could not be found.
 **/
-exports.getUserByAPIKey = function(apiKey)
-{
-
-};
+exports.getUserByAPIKey = decorateForDatabase(
+    getUserByAPIKey,
+    'account',
+    'account',
+    'getting user by api key'
+);
 
 
 /**
@@ -61,10 +388,12 @@ exports.getUserByAPIKey = function(apiKey)
  * @return {Q.promise} Promise that resolves to the provided Account object
  *      after it has been saved to the database.
 **/
-exports.putUser = function(account)
-{
-
-};
+exports.putUser = decorateForDatabase(
+    putUser,
+    'account',
+    'account',
+    'persisting user'
+);
 
 
 /**
@@ -86,10 +415,12 @@ exports.putUser = function(account)
  *      write request has been made to the database. This will potentially
  *      resolve before the actual write.
 **/
-exports.reportUsage = function(apiKey, query, error)
-{
-
-};
+exports.reportUsage = decorateForDatabase(
+    reportUsage,
+    'logging',
+    'usage',
+    'reporting account usage'
+);
 
 
 /**
@@ -104,10 +435,12 @@ exports.reportUsage = function(apiKey, query, error)
  * @return {Q.promise} Promise that resolves to an Array of QueryLog Objects as
  *      described in the structures section of the project wiki.
 **/
-exports.findAPIKeyUsage = function(apiKey, startDate, endDate)
-{
-
-};
+exports.findAPIKeyUsage = decorateForDatabase(
+    findAPIKeyUsage,
+    'logging',
+    'usage',
+    'finding account usage'
+);
 
 
 /**
@@ -126,7 +459,9 @@ exports.findAPIKeyUsage = function(apiKey, startDate, endDate)
  *      remove request has been made to the database. This will potentially
  *      resolve before the actual remove.
 **/
-exports.removeOldUsageRecords = function(apiKey, endDate, removeErrors)
-{
-
-};
+exports.removeOldUsageRecords = decorateForDatabase(
+    removeOldUsageRecords,
+    'logging',
+    'usage',
+    'removing old usage records'
+);

@@ -143,10 +143,13 @@ function MockMongoClient()
 
         };
 
-        var retClient = {'collection': function(name, callback) {
-            lastCollectionName = name;
-            callback(null, retCollection);
-        }};
+        var retClient = {
+            'collection': function(name, callback) {
+                lastCollectionName = name;
+                callback(null, retCollection);
+            },
+            'close': function() {}
+        };
 
         callback(null, retClient);
     };
