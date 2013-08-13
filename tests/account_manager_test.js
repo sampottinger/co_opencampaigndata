@@ -189,14 +189,12 @@ exports.testCanFulfillQueryDates = function(test)
 
     var expectedStart = new Date().getTime() - MILLIS_PER_MINUTE;
     var expectedEnd = new Date().getTime();
-    
     var isStartDate = function (val) {
         return val.getTime() == expectedStart; 
     };
     var isEndDate = function (val) { 
         return val.getTime() == expectedEnd;
     };
-    
     var startDateMatch = sinon.match(isStartDate, 'Unexpected date.');
     var endDateMatch = sinon.match(isEndDate, 'Unexpected date.');
 
@@ -234,8 +232,7 @@ exports.testUpdateAccountLog = function(test)
     var reportUsageStub = sinon.stub(account_db_facade, 'reportUsage');
     var removeStub = sinon.stub(account_db_facade, 'removeOldUsageRecords');
 
-    var endMillisOffset = DAY_MINUTES * MILLIS_PER_MINUTE;
-    var expectedEnd = new Date().getTime() - endMillisOffset;
+    var expectedEnd = new Date().getTime() - DAY_MINUTES * MILLIS_PER_MINUTE;
     var isEndDate = function (val) { return val.getTime() == expectedEnd; };
     var endDateMatch = sinon.match(isEndDate, 'Unexpected date.');
 
@@ -274,9 +271,10 @@ exports.testUpdateAccountLogError = function(test)
     var reportUsageStub = sinon.stub(account_db_facade, 'reportUsage');
     var removeStub = sinon.stub(account_db_facade, 'removeOldUsageRecords');
 
-    var endMillisOffset = DAY_MINUTES * MILLIS_PER_MINUTE;
-    var expectedEnd = new Date().getTime() - endMillisOffset;
-    var isEndDate = function (val) { return val.getTime() == expectedEnd; };
+    var expectedEnd = new Date().getTime() - DAY_MINUTES * MILLIS_PER_MINUTE;
+    var isEndDate = function (val) {
+        return val.getTime() == expectedEnd;
+    };
     var endDateMatch = sinon.match(isEndDate, 'Unexpected date.');
 
     var updatePromise = q.fcall(function () { return; });

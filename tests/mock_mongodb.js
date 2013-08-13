@@ -81,7 +81,10 @@ function MockMongoClient()
                     }
                 };
 
-                callback(null, mockedStream);
+                if(callback !== undefined)
+                    callback(null, mockedStream);
+                else
+                    return mockedStream;
             },
 
             // Provide mocked version of findOne
@@ -134,6 +137,7 @@ function MockMongoClient()
             {
                 lastSelector = selector;
                 lastOptions = options;
+                lastOperation = 'remove';
 
                 if(callback !== undefined)
                 {
@@ -143,10 +147,13 @@ function MockMongoClient()
 
         };
 
-        var retClient = {'collection': function(name, callback) {
-            lastCollectionName = name;
-            callback(null, retCollection);
-        }};
+        var retClient = {
+            'collection': function(name, callback) {
+                lastCollectionName = name;
+                callback(null, retCollection);
+            },
+            'close': function() {}
+        };
 
         callback(null, retClient);
     };
@@ -171,7 +178,7 @@ function MockMongoClient()
     this.clearLastURI = function()
     {
         lastURI = null;
-    }
+    };
 
     /**
      * Get the database collection this client last preteneded to load.
@@ -259,7 +266,7 @@ function MockMongoClient()
         queryReturned = false;
         endStreamListener = null;
         lastOperation = null;
-    }
+    };
 
 }
 
