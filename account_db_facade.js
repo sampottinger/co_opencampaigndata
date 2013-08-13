@@ -31,7 +31,7 @@ var RELEASE_DB_CONNECTION_STRATEGIES = {
 
 // Strategy index mapping collection type to a strategy to select that database
 // collection.
-var SELECT_COLLECTION_STRAGIES = {
+var SELECT_COLLECTION_STRATEGIES = {
     account: getAccountCollection,
     usage: getUsageCollection
 };
@@ -441,7 +441,7 @@ function decorateForDatabase(targetFunction, database, collection, context)
 {
     var acquireStrategy = ACQUIRE_DB_CONNECTION_STRATEGIES[database];
     var releaseStrategy = RELEASE_DB_CONNECTION_STRATEGIES[database];
-    var collectionSelectStrategy = SELECT_COLLECTION_STRAGIES[collection];
+    var collectionSelectStrategy = SELECT_COLLECTION_STRATEGIES[collection];
 
     var innerState = this;
 
