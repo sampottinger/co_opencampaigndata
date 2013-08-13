@@ -9,6 +9,8 @@
  * @license GNU GPL v3
 **/
 
+var Q = require('q');
+
 // Listing of available serialization routines.
 var serializationStrategies = {
     'csv': formatAsCSV,
@@ -17,7 +19,10 @@ var serializationStrategies = {
 
 
 /**
- * Format the given collection of Objects to a 2D CSV table.
+ * Serialize the given collection of Objects to a 2D CSV table.
+ *
+ * Serialize the given collection of Objects to a 2D CSV table with a comma as
+ * a delimeter and double quotes for quoting.
  *
  * @param {Array} corpus Array of Object to convert to a CSV table.
  * @param {Array} fields Array of String field names to include in the CSV
@@ -30,7 +35,28 @@ var serializationStrategies = {
 **/
 function formatAsCSV(corpus, fields, ununsedLabel)
 {
-
+  return Q.fcall(function() {
+      var i = 0,
+          j = 0,
+          corpusLen = 0,
+          fieldsLen = 0,
+          rows = [],
+          columns = [];
+      // Set up header.
+      rows.push(fields);
+      for(i = 0, corpusLen = corpus.length; i < corpusLen; ++i) {
+          columns = [];
+          for(j = 0, fieldsLen = fields.length; j < fieldsLen; ++j) {
+              if(typeof(corpus[i][fields[j]]) == 'number') {
+                  columns.push(corpus[i][fields[j]]);
+              } else {
+                  columns.push('"' + corpus[i][fields[j]] + '"');
+              }
+          }
+          rows.push(columns.join(','));
+      }
+      return rows.join('\n');
+  });
 }
 
 
@@ -48,7 +74,23 @@ function formatAsCSV(corpus, fields, ununsedLabel)
 **/
 function formatAsJSON(corpus, fields, label)
 {
-
+    return Q.fcall(function() {
+      var i = 0,
+          j = 0,
+          corpusLen = 0,
+          fieldsLen = 0,
+          item = {},
+          jsonObj = {};
+      jsonObj[label] = [];
+      for(i = 0, corpusLen = corpus.length; i < corpusLen; ++i) {
+          item = {};
+          for(j = 0, fieldsLen = fields.length; j < fieldsLen; ++j) {
+              item[fields[j]] = corpus[i][fields[j]];
+          }
+          jsonObj[label].push(item);
+      }
+      return JSON.stringify(jsonObj);
+    });
 }
 
 
@@ -67,8 +109,19 @@ function formatAsJSON(corpus, fields, label)
  * @param {String} label If the format requires a label describing the corpus
  *      (examples include expenditures, loans, or contributions), this String
  *      label will be used.
+ * @return {Q.promise} Promise that resolves to a String containing the
+ *      resulting serialization.
 **/
 exports.format = function(format, corpus, fields, label)
 {
-
+    var strategy = serializationStrategies[format];
+    if(strategy === undefined)
+    {
+        var notFoundError = new Error('Unknown format: ' + format);
+        return Q.fcall(function() { throw notFoundError; });
+    }
+    else
+    {
+        return strategy(corpus, fields, label);
+    }
 };
