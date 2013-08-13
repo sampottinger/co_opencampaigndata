@@ -178,7 +178,7 @@ function MockMongoClient()
     this.clearLastURI = function()
     {
         lastURI = null;
-    }
+    };
 
     /**
      * Get the database collection this client last preteneded to load.
@@ -266,7 +266,7 @@ function MockMongoClient()
         queryReturned = false;
         endStreamListener = null;
         lastOperation = null;
-    }
+    };
 
 }
 

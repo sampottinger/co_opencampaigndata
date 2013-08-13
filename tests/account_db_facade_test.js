@@ -273,8 +273,8 @@ module.exports = {
 
             var lastSelector = mock_mongo_client.getLastSelector();
             test.equal(lastSelector.apiKey, TEST_API_KEY);
-            test.equal(lastSelector.createdOn['$gt'], startDate);
-            test.equal(lastSelector.createdOn['$lt'], endDate);
+            test.equal(lastSelector.createdOn.$gt, startDate);
+            test.equal(lastSelector.createdOn.$lt, endDate);
 
             test.equal(mock_mongo_client.getLastURI(), TEST_USAGES_DB_URI);
             test.equal(mock_mongo_client.getLastCollectionName(),
@@ -305,7 +305,7 @@ module.exports = {
 
             var lastSelector = mock_mongo_client.getLastSelector();
             test.equal(lastSelector.apiKey, TEST_API_KEY);
-            test.equal(lastSelector.createdOn['$lt'], endDate);
+            test.equal(lastSelector.createdOn.$lt, endDate);
 
             test.equal(mock_mongo_client.getLastURI(), TEST_USAGES_DB_URI);
             test.equal(mock_mongo_client.getLastCollectionName(),
