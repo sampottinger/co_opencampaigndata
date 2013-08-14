@@ -6,7 +6,7 @@ h3. Authors and License
 
 Released under the "GNU GPL v3":http://www.gnu.org/licenses/gpl.html license.
 
-(c) 2013 "Erik Cunningham":www.linkedin.com/pub/erik-cunningham/1/a74/713/
+(c) 2013 "Erik Cunningham":http://blog.erikwcunningham.com/
 (c) 2013 "Ned McClain":http://www.appliedtrust.com/company/bios/ned-mcclain
 (c) 2013 "Sam Pottinger":http://gleap.org
 
