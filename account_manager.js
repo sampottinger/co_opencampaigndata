@@ -31,8 +31,7 @@ var ADMIN_USER = 'admin_user';
  *
  * @param {Error} err The error message to raise a new error with.
 **/
-function genericErrorHandler(err)
-{
+function genericErrorHandler(err) {
     throw new err;
 }
 
@@ -44,8 +43,7 @@ function genericErrorHandler(err)
  * @return {String} The generated String.
  * @author http://stackoverflow.com/questions/1349404
 **/
-function generateRandomString(length)
-{
+function generateRandomString(length) {
     charSet = KEY_CHARS;
     var randomString = '';
     for (var i = 0; i < length; i++) {
@@ -61,8 +59,7 @@ function generateRandomString(length)
  *
  * @return {Q.promise} Promise that resolves to a String with the new API key.
 **/ 
-function generateNewAPIKey()
-{
+function generateNewAPIKey() {
     var deferred = q.defer();
     var possibleAPIKey = generateRandomString(API_KEY_LEN);
     
@@ -88,8 +85,7 @@ function generateNewAPIKey()
  * @param {Object} account The Account Object (see structures page on wikie) to
  *      persist to the accounts database.
 **/
-function createNewAccount(email, apiKey, permissions)
-{
+function createNewAccount(email, apiKey, permissions) {
     account = {
         email: email,
         apiKey: apiKey,
@@ -110,8 +106,7 @@ function createNewAccount(email, apiKey, permissions)
  * @return {Q.promise} Promise that resolves to the Account record for the user
  *      with the given email address.
 **/
-exports.getOrCreateUserByEmail = function(email)
-{
+exports.getOrCreateUserByEmail = function(email) {
     var deferred = q.defer();
 
     account_db_facade.getUserByEmail(email).then(function(account){
@@ -154,8 +149,7 @@ exports.getOrCreateUserByEmail = function(email)
  * @return {Q.promise} Promise that resolves to true if the user can fulfill
  *      the given query and false otherwise.
 **/
-exports.canFulfillQuery = function(account, query)
-{
+exports.canFulfillQuery = function(account, query) {
     var deferred = q.defer();
     var lastMinuteMillis = new Date().getTime() - MILLIS_PER_MINUTE;
     var lastMinute = new Date(lastMinuteMillis);
@@ -189,8 +183,7 @@ exports.canFulfillQuery = function(account, query)
  *      have been made. However, it may resolve before the database operations
  *      have actually finished.
 **/ 
-exports.updateAccountLog = function(account, query, error)
-{
+exports.updateAccountLog = function(account, query, error) {
     var deferred = q.defer();
     var apiKey = account.apiKey;
     var keepRecordsStartDate = DAY_MINUTES * MILLIS_PER_MINUTE;

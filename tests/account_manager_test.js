@@ -32,8 +32,7 @@ var clock;
  * @param {nodeunit.test} test Object describing the nodeunit test currently
  *      running.
 **/
-exports.testCreateUserByEmail = function(test)
-{
+exports.testCreateUserByEmail = function(test) {
     var partialAccount = {'email': TEST_EMAIL};
 
     var getByKeyStub = sinon.stub(account_db_facade, 'getUserByAPIKey');
@@ -73,8 +72,7 @@ exports.testCreateUserByEmail = function(test)
  * @param {nodeunit.test} test Object describing the nodeunit test currently
  *      running.
 **/
-exports.testGetUserByEmail = function(test)
-{
+exports.testGetUserByEmail = function(test) {
     var partialAccount = {'email': TEST_EMAIL};
 
     var getByEmailStub = sinon.stub(account_db_facade, 'getUserByEmail');
@@ -86,8 +84,7 @@ exports.testGetUserByEmail = function(test)
     putUserStub.throws(new Error('Put should not be called in this test.'));
 
     account_manager.getOrCreateUserByEmail(TEST_EMAIL)
-    .then(function(account)
-    {
+    .then(function(account) {
         test.equal(account.email, TEST_EMAIL);
         test.ok(getByEmailStub.calledWith(TEST_EMAIL));
         test.done();
@@ -109,8 +106,7 @@ exports.testGetUserByEmail = function(test)
  * @param {nodeunit.test} test Object describing the nodeunit test currently
  *      running.
 **/
-exports.testCanFulfillQuery = function(test)
-{
+exports.testCanFulfillQuery = function(test) {
     var partialAccount = {'apiKey': TEST_API_KEY};
     var partialQuery = {};
     var retLog = [{'apiKey': TEST_API_KEY}];
@@ -122,8 +118,7 @@ exports.testCanFulfillQuery = function(test)
     findAPIKeyUsageStub.returns(apiKeyUsagePromise);
 
     account_manager.canFulfillQuery(partialAccount, partialQuery)
-    .then(function (canFulfillQuery)
-    {
+    .then(function (canFulfillQuery) {
         test.equal(canFulfillQuery, true);
         test.done();
     }, function (error) { testUtil.reportAsyncError(test, error); } )
@@ -143,8 +138,7 @@ exports.testCanFulfillQuery = function(test)
  * @param {nodeunit.test} test Object describing the nodeunit test currently
  *      running.
 **/
-exports.testCannotFulfillQuery = function(test)
-{
+exports.testCannotFulfillQuery = function(test) {
     var partialAccount = {'apiKey': TEST_API_KEY};
     var partialQuery = {};
     var retLog = [{'apiKey': TEST_API_KEY}, {'apiKey': TEST_API_KEY}];
@@ -156,8 +150,7 @@ exports.testCannotFulfillQuery = function(test)
     findAPIKeyUsageStub.returns(apiKeyUsagePromise);
 
     account_manager.canFulfillQuery(partialAccount, partialQuery)
-    .then(function (canFulfillQuery)
-    {
+    .then(function (canFulfillQuery) {
         test.equal(canFulfillQuery, false);
         test.done();
     }, function (error) { testUtil.reportAsyncError(test, error); } )
@@ -177,8 +170,7 @@ exports.testCannotFulfillQuery = function(test)
  * @param {nodeunit.test} test Object describing the nodeunit test currently
  *      running.
 **/
-exports.testCanFulfillQueryDates = function(test)
-{
+exports.testCanFulfillQueryDates = function(test) {
     var partialAccount = {'apiKey': TEST_API_KEY};
     var partialQuery = {};
     var retLog = [{'apiKey': TEST_API_KEY}];
@@ -202,8 +194,7 @@ exports.testCanFulfillQueryDates = function(test)
     findAPIKeyUsageStub.returns(apiKeyUsagePromise);
 
     account_manager.canFulfillQuery(partialAccount, partialQuery)
-    .then(function (canFulfillQuery)
-    {
+    .then(function (canFulfillQuery) {
         var matchingDates = findAPIKeyUsageStub.calledWith(TEST_API_KEY,
             startDateMatch, endDateMatch);
         test.ok(matchingDates);
@@ -223,8 +214,7 @@ exports.testCanFulfillQueryDates = function(test)
  * @param {nodeunit.test} test Object describing the nodeunit test currently
  *      running.
 **/
-exports.testUpdateAccountLog = function(test)
-{
+exports.testUpdateAccountLog = function(test) {
     var clock = sinon.useFakeTimers();
     var partialAccount = {'apiKey': TEST_API_KEY};
     var partialQuery = {};
@@ -261,8 +251,7 @@ exports.testUpdateAccountLog = function(test)
  * @param {nodeunit.test} test Object describing the nodeunit test currently
  *      running.
 **/
-exports.testUpdateAccountLogError = function(test)
-{
+exports.testUpdateAccountLogError = function(test) {
     var clock = sinon.useFakeTimers();
     var partialAccount = {'apiKey': TEST_API_KEY};
     var partialQuery = {};
@@ -286,8 +275,7 @@ exports.testUpdateAccountLogError = function(test)
         partialQuery,
         testError
     )
-    .then(function()
-    {
+    .then(function() {
         var rightRemoveParams = removeStub.calledWith(TEST_API_KEY,
             endDateMatch, false);
         var rightReportParams = reportUsageStub.calledWith(TEST_API_KEY,
