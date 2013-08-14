@@ -33,8 +33,7 @@ var serializationStrategies = {
  * @return {Q.promise} Promise that resolves to a String with the resulting
  *      return CSV values.
 **/
-function formatAsCSV(corpus, fields, ununsedLabel)
-{
+function formatAsCSV(corpus, fields, ununsedLabel) {
   return Q.fcall(function() {
       var i = 0,
           j = 0,
@@ -72,8 +71,7 @@ function formatAsCSV(corpus, fields, ununsedLabel)
  * @return {Q.promise} Promise that resolves to a String containing the
  *      resulting JSON document.
 **/
-function formatAsJSON(corpus, fields, label)
-{
+function formatAsJSON(corpus, fields, label) {
     return Q.fcall(function() {
       var i = 0,
           j = 0,
@@ -112,16 +110,12 @@ function formatAsJSON(corpus, fields, label)
  * @return {Q.promise} Promise that resolves to a String containing the
  *      resulting serialization.
 **/
-exports.format = function(format, corpus, fields, label)
-{
+exports.format = function(format, corpus, fields, label) {
     var strategy = serializationStrategies[format];
-    if(strategy === undefined)
-    {
+    if(strategy === undefined) {
         var notFoundError = new Error('Unknown format: ' + format);
         return Q.fcall(function() { throw notFoundError; });
-    }
-    else
-    {
+    } else {
         return strategy(corpus, fields, label);
     }
 };

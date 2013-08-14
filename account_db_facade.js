@@ -53,8 +53,7 @@ function createAccountDBPool()
     return generic_pool.Pool({
         name: 'mongodb-account',
         create: function(createCallback) {
-            env_config.loadConfig().then(function(envSettings)
-            {
+            env_config.loadConfig().then(function(envSettings) {
                 mongodb.MongoClient.connect(
                     envSettings.ACCOUNT_DB_URI,
                     function (err, db) { 
@@ -81,8 +80,7 @@ function createLoggingDBPool()
     return generic_pool.Pool({
         name: 'mongodb-logging',
         create: function(callback) {
-            env_config.loadConfig().then(function(envSettings)
-            {
+            env_config.loadConfig().then(function(envSettings) {
                 mongodb.MongoClient.connect(
                     envSettings.LOGGING_DB_URI,
                     function (err, db) { 
@@ -111,8 +109,7 @@ function acquireAccountDBConnection()
     var deferred = q.defer();
 
     accountDBPool.acquire(function (err, db) {
-        if(err)
-        {
+        if(err) {
             var message = 'Error while acquiring account DB connection: ' + err;
             throw new Error(message);
         }
@@ -133,13 +130,11 @@ function acquireAccountDBConnection()
  * @return {Q.promise} Promise that resolves to a connection (mongodb.Db) to the
  *      user accounts activity logging database.
 **/
-function acquireLoggingDBConnection()
-{
+function acquireLoggingDBConnection() {
     var deferred = q.defer();
 
     loggingDBPool.acquire(function (err, db) {
-        if(err)
-        {
+        if(err) {
             var message = 'Error while acquiring logging DB connection: ' + err;
             throw new Error(message);
         }
@@ -156,8 +151,7 @@ function acquireLoggingDBConnection()
  * @param {mongodb.Db} db The database client to release back to the connection
  *      pool for the account database.
 **/
-function releaseAccountDBConnection(db)
-{
+function releaseAccountDBConnection(db) {
     accountDBPool.release(db);
 }
 
@@ -168,8 +162,7 @@ function releaseAccountDBConnection(db)
  * @param {mongo.Db} db The database client to release back to the connection
  *      pool for the logging database.
 **/
-function releaseLoggingDBConnection(db)
-{
+function releaseLoggingDBConnection(db) {
     loggingDBPool.release(db);
 }
 
@@ -181,8 +174,7 @@ function releaseLoggingDBConnection(db)
  * @return {Q.promise} Promise that resolves to the account collection
  *      (mongodb.Collection).
 **/
-function getAccountCollection(db)
-{
+function getAccountCollection(db) {
     var deferred = q.defer();
 
     db.collection(ACCOUNT_COLLECTION, function (err, collection) {
@@ -200,8 +192,7 @@ function getAccountCollection(db)
  * @return {Q.promise} Promise that resolves to the usagees collection
  *      (mongodb.Collection).
 **/
-function getUsageCollection(db)
-{
+function getUsageCollection(db) {
     var deferred = q.defer();
 
     db.collection(USAGE_COLLECTION, function (err, collection) {
@@ -223,8 +214,7 @@ function getUsageCollection(db)
  *      in the structures article of the project wiki or null if a matching
  *      account record could not be found.
 **/
-function getUserByEmail(collection, email)
-{
+function getUserByEmail(collection, email) {
     var deferred = q.defer();
 
     collection.findOne({email: email}, function (err, doc) {
@@ -251,8 +241,7 @@ function getUserByEmail(collection, email)
  *      in the structures article of the project wiki or null if a matching
  *      account record could not be found.
 **/
-function getUserByAPIKey(collection, apiKey)
-{
+function getUserByAPIKey(collection, apiKey) {
     var deferred = q.defer();
 
     collection.findOne({apiKey: apiKey}, function (err, doc) {
@@ -280,8 +269,7 @@ function getUserByAPIKey(collection, apiKey)
  * @return {Q.promise} Promise that resolves to the provided Account object
  *      after it has been saved to the database.
 **/
-function putUser(collection, account)
-{
+function putUser(collection, account) {
     var deferred = q.defer();
     var email = account.email;
 
@@ -322,8 +310,7 @@ function putUser(collection, account)
  *      the asynchronous write request has been made to the database. This will
  *      potentially resolve before the actual write.
 **/
-function reportUsage(collection, apiKey, query, error)
-{
+function reportUsage(collection, apiKey, query, error) {
     var deferred = q.defer();
 
     var newRecord = {
@@ -356,8 +343,7 @@ function reportUsage(collection, apiKey, query, error)
  * @return {Q.promise} Promise that resolves to an Array of QueryLog Objects as
  *      described in the structures section of the project wiki.
 **/
-function findAPIKeyUsage(collection, apiKey, startDate, endDate)
-{
+function findAPIKeyUsage(collection, apiKey, startDate, endDate) {
     var deferred = q.defer();
     var searchFilter = {
         apiKey: apiKey,
@@ -393,8 +379,7 @@ function findAPIKeyUsage(collection, apiKey, startDate, endDate)
  *      remove request has been made to the database. This will potentially
  *      resolve before the actual remove.
 **/
-function removeOldUsageRecords(collection, apiKey, endDate, removeErrors)
-{
+function removeOldUsageRecords(collection, apiKey, endDate, removeErrors) {
     var deferred = q.defer();
 
     var searchFilter;
@@ -437,8 +422,7 @@ function removeOldUsageRecords(collection, apiKey, endDate, removeErrors)
  *      Provided name must correspond to a property in
  *      SELECT_COLLECTION_STRATEGIES.
 **/
-function decorateForDatabase(targetFunction, database, collection, context)
-{
+function decorateForDatabase(targetFunction, database, collection, context) {
     var acquireStrategy = ACQUIRE_DB_CONNECTION_STRATEGIES[database];
     var releaseStrategy = RELEASE_DB_CONNECTION_STRATEGIES[database];
     var collectionSelectStrategy = SELECT_COLLECTION_STRATEGIES[collection];
@@ -454,8 +438,7 @@ function decorateForDatabase(targetFunction, database, collection, context)
         };
     };
 
-    var throwError = function(error)
-    {
+    var throwError = function(error) {
         var message = 'Error while ' +  context + ': ' + error;
         message += ': ' + error.stack;
         message += '\n\n';
@@ -484,8 +467,7 @@ function decorateForDatabase(targetFunction, database, collection, context)
         var args = Array.prototype.slice.call(arguments);
         var deferred = q.defer();
 
-        var executeDBOperations = function(database)
-        {
+        var executeDBOperations = function(database) {
             var innerDeferred = q.defer();
 
             collectionSelectStrategy(database)
