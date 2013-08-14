@@ -16,8 +16,7 @@ var data_formatter = require('../data_formatter');
  * @param {nodeunit.test} test Object describing the nodeunit test currently
  *      running.
 **/
-exports.testFormatCSV = function(test)
-{
+exports.testFormatCSV = function(test) {
     var testCorpus = [
         {'field1': 1, 'field2': 'test1', 'field3': 'dont include me!'},
         {'field1': 2, 'field2': 'test2', 'field3': 'dont include me!'}
@@ -42,8 +41,7 @@ exports.testFormatCSV = function(test)
  * @param {nodeunit.test} test Object describing the nodeunit test currently
  *      running.
 **/
-exports.testFormatJSON = function(test)
-{
+exports.testFormatJSON = function(test) {
     var testCorpus = [
         {'field1': 1, 'field2': 'test1', 'field3': 'dont include me!'},
         {'field1': 2, 'field2': 'test2', 'field3': 'dont include me!'}

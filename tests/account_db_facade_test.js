@@ -66,8 +66,7 @@ module.exports = {
      * @param {function} callback Standard callback from nodeunit to call after
      *      test setup logic has finished.
     **/
-    setUp: function(callback)
-    {
+    setUp: function(callback) {
         account_db_facade.__set__('accountDBPool', createAccountDBPool());
         account_db_facade.__set__('loggingDBPool', createLoggingDBPool());
         callback();
@@ -82,8 +81,7 @@ module.exports = {
      * @param {function} callback Standard callback from nodeunit to call after
      *      test tear down logic has finished.
     **/
-    tearDown: function(callback)
-    {
+    tearDown: function(callback) {
         var accountDBPool = account_db_facade.__get__('accountDBPool');
         var loggingDBPool = account_db_facade.__get__('loggingDBPool');
 
@@ -100,8 +98,7 @@ module.exports = {
      * @param {nodeunit.test} test Object describing the nodeunit test currently
      *      running.
     **/
-    testGetUserByEmail: function (test)
-    {
+    testGetUserByEmail: function (test) {
         mock_mongo_client.prepareForNextUse({email: TEST_EMAIL});
 
         account_db_facade.getUserByEmail(TEST_EMAIL).then(function(retAccount){
@@ -127,8 +124,7 @@ module.exports = {
      * @param {nodeunit.test} test Object describing the nodeunit test currently
      *      running.
     **/
-    testGetUserByAPIKey: function (test)
-    {
+    testGetUserByAPIKey: function (test) {
         mock_mongo_client.prepareForNextUse({email: TEST_EMAIL});
 
         account_db_facade.getUserByAPIKey(TEST_API_KEY)
@@ -155,8 +151,7 @@ module.exports = {
      * @param {nodeunit.test} test Object describing the nodeunit test currently
      *      running.
     **/
-    testPutUser: function (test)
-    {
+    testPutUser: function (test) {
         mock_mongo_client.prepareForNextUse();
         var testUser = {email: TEST_EMAIL};
 
@@ -188,8 +183,7 @@ module.exports = {
      * @param {nodeunit.test} test Object describing the nodeunit test currently
      *      running.
     **/
-    testReportUsageNoError: function (test)
-    {
+    testReportUsageNoError: function (test) {
         mock_mongo_client.prepareForNextUse();
         var query = {recordID: 12345};
 
@@ -217,8 +211,7 @@ module.exports = {
      * @param {nodeunit.test} test Object describing the nodeunit test currently
      *      running.
     **/
-    testReportUsageError: function (test)
-    {
+    testReportUsageError: function (test) {
         mock_mongo_client.prepareForNextUse();
         var query = {recordID: 12345};
 
@@ -248,8 +241,7 @@ module.exports = {
      * @param {nodeunit.Test} test Object describing the nodeunit test currently
      *      running.
     **/
-    testFindAPIKeyUsage: function (test)
-    {
+    testFindAPIKeyUsage: function (test) {
         var startDate = new Date(1, 2, 2013);
         var endDate = new Date(2, 3, 2013);
 
@@ -294,15 +286,13 @@ module.exports = {
      * @param {nodeunit.Test} test Object describing the nodeunit test currently
      *      running.
     **/
-    testFindAPIKeyUsageRemoveErrors: function (test)
-    {
+    testFindAPIKeyUsageRemoveErrors: function (test) {
         var endDate = new Date(2, 3, 2013);
 
         mock_mongo_client.prepareForNextUse(1);
 
         account_db_facade.removeOldUsageRecords(TEST_API_KEY, endDate, true)
         .then(function(){
-
             var lastSelector = mock_mongo_client.getLastSelector();
             test.equal(lastSelector.apiKey, TEST_API_KEY);
             test.equal(lastSelector.createdOn.$lt, endDate);
@@ -326,8 +316,7 @@ module.exports = {
      * @param {nodeunit.Test} test Object describing the nodeunit test currently
      *      running.
     **/
-    testFindAPIKeyUsageNoRemoveErrors: function (test)
-    {
+    testFindAPIKeyUsageNoRemoveErrors: function (test) {
         var endDate = new Date(2, 3, 2013);
 
         mock_mongo_client.prepareForNextUse(1);

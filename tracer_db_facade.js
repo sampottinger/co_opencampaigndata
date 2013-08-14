@@ -25,7 +25,6 @@
  *      streaming results has started but may resolve before that streaming has
  *      finished.
 **/
-exports.executeQuery = function(query, onNext, onEnd, onError)
-{
+exports.executeQuery = function(query, onNext, onEnd, onError) {
 
 };

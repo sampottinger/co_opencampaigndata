@@ -18,8 +18,7 @@ var TEST_CONFIG = {test1: 1, test2: 'two'};
  *      to execute readFile without error.
  * @param {String} contents The contents to return for readFile.
 **/
-function FakeFile(err, contents)
-{
+function FakeFile(err, contents) {
     this.lastSrc = null;
     this.lastEncoding = null;
 
@@ -34,8 +33,7 @@ function FakeFile(err, contents)
      *      is null if no error was encountered and a second String argument
      *      for the contents of the file itself.
     **/
-    this.readFile = function (src, encoding, callback)
-    {
+    this.readFile = function (src, encoding, callback) {
         this.lastSrc = src;
         this.lastEncoding = encoding;
 
@@ -48,8 +46,7 @@ function FakeFile(err, contents)
      * @return {String} The location that this dependency injection contstruct
      *      last pretended to read.
     **/
-    this.getLastSrc = function ()
-    {
+    this.getLastSrc = function () {
         return this.lastSrc;
     };
 
@@ -61,8 +58,7 @@ function FakeFile(err, contents)
      *
      * @return {function} Fake readFile.
     **/
-    this.createReadFileCallback = function ()
-    {
+    this.createReadFileCallback = function () {
         var target = this;
         return function (src, encoding, callback) {
             target.readFile(src, encoding, callback);
@@ -79,8 +75,7 @@ module.exports = {
      * @param {function} callback The standard callback used by nodeunit to
      *      indicate that setup has completed.
     **/
-    setUp: function(callback)
-    {
+    setUp: function(callback) {
         env_config.__set__('loadedConfiguration', null);
         callback();
     },
@@ -92,8 +87,7 @@ module.exports = {
      * @param {nodeunit.test} test Standard nodeunit test object describing the
      *      test currently running.
     **/
-    testLoadConfig: function (test)
-    {
+    testLoadConfig: function (test) {
         var fakeFile = new FakeFile(null, TEST_FILE_CONTENTS);
         var expectedFileSrc = env_config.__get__('CONFIG_FILE_SRC');
         env_config.__set__('fs.readFile', fakeFile.createReadFileCallback());
@@ -113,8 +107,7 @@ module.exports = {
      * @param {nodeunit.test} test Standard nodeunit test object describing the
      *      test currently running.
     **/
-    testLoadConfigError: function (test)
-    {
+    testLoadConfigError: function (test) {
         var fakeFile = new FakeFile('test error!', null);
         env_config.__set__('fs.readFile', fakeFile.createReadFileCallback());
 
@@ -134,8 +127,7 @@ module.exports = {
      * @param {nodeunit.test} test Standard nodeunit test object describing the
      *      test currently running.
     **/
-    testCache: function (test)
-    {
+    testCache: function (test) {
         var fakeFile1 = new FakeFile(null, TEST_FILE_CONTENTS);
         var fakeFile2 = new FakeFile('test error!', null);
         var callback1 = fakeFile1.createReadFileCallback();
@@ -145,7 +137,6 @@ module.exports = {
         env_config.__set__('fs.readFile', callback1);
         env_config.loadConfig()
         .then(function(loadedConfig) {
-            
             // Invalidate fake file to cause read error and use file in cache.
             env_config.__set__('fs.readFile', callback2);
             env_config.loadConfig()

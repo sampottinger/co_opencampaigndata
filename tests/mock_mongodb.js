@@ -12,8 +12,7 @@
 /**
  * Mock version of mongodb.MongoClient for use in testing.
 **/
-function MockMongoClient()
-{
+function MockMongoClient() {
     var lastURI = null;
     var lastCollectionName = null;
     var lastSelector = null;
@@ -36,7 +35,7 @@ function MockMongoClient()
      * @param {function} callback The function to call after pretending to open
      *      a database.
     **/
-    this.connect = function(uri, callback){
+    this.connect = function(uri, callback) {
         lastURI = uri;
         var retCollection = {
 
@@ -45,8 +44,7 @@ function MockMongoClient()
                 lastSelector = selector;
                 lastOperation = 'find';
 
-                if(callback === undefined)
-                {
+                if(callback === undefined) {
                     callback = options;
                     options = undefined;
                 }
@@ -55,21 +53,18 @@ function MockMongoClient()
 
                 var mockedStream = {
                     'stream': {
-                        'on': function(listenerType, callback)
-                        {
+                        'on': function(listenerType, callback) {
                             if(listenerType === 'data')
                             {
                                 var queryResultLen = nextResult.length;
-                                for(var i=0; i<queryResultLen; i++)
-                                {
+                                for(var i=0; i<queryResultLen; i++) {
                                     callback(nextResult[i]);
                                 }
                                 queryReturned = true;
                                 if(endStreamListener !== null)
                                     callback();
                             }
-                            else if(listenerType === 'end')
-                            {
+                            else if(listenerType === 'end') {
                                 callback();
                                 if(queryReturned)
                                     callback();
@@ -81,20 +76,19 @@ function MockMongoClient()
                     }
                 };
 
-                if(callback !== undefined)
+                if(callback !== undefined) {
                     callback(null, mockedStream);
-                else
+                } else {
                     return mockedStream;
+                }
             },
 
             // Provide mocked version of findOne
-            'findOne': function(selector, options, callback)
-            {
+            'findOne': function(selector, options, callback) {
                 lastSelector = selector;
                 lastOperation = 'findOne';
 
-                if(callback === undefined)
-                {
+                if(callback === undefined) {
                     callback = options;
                     options = undefined;
                 }
@@ -105,42 +99,36 @@ function MockMongoClient()
             },
 
             // Provide mocked version of update
-            'update': function(selector, documents, options, callback)
-            {
+            'update': function(selector, documents, options, callback) {
                 lastSelector = selector;
                 lastDocuments = documents;
                 lastOptions = options;
                 lastOperation = 'update';
 
-                if(callback !== undefined)
-                {
+                if(callback !== undefined) {
                     callback(null, nextResult);
                 }
             },
 
 
             // Provide mocked version of insert
-            'insert': function(docs, options, callback)
-            {
+            'insert': function(docs, options, callback) {
                 lastDocuments = docs;
                 lastOptions = options;
                 lastOperation = 'insert';
 
-                if(callback !== undefined)
-                {
+                if(callback !== undefined) {
                     callback(null, nextResult);
                 }
             },
 
             // Provide mocked version of remove
-            'remove': function(selector, options, callback)
-            {
+            'remove': function(selector, options, callback) {
                 lastSelector = selector;
                 lastOptions = options;
                 lastOperation = 'remove';
 
-                if(callback !== undefined)
-                {
+                if(callback !== undefined) {
                     callback(null, nextResult);
                 }
             }
@@ -164,8 +152,7 @@ function MockMongoClient()
      *
      * @return {String} Last URI opened with this mock client.
     **/
-    this.getLastURI = function()
-    {
+    this.getLastURI = function() {
         return lastURI;
     };
 
@@ -175,8 +162,7 @@ function MockMongoClient()
      * Reset this mock client's last connected URI record to null. The last URI
      * is maintained across calls to prepareForNextUse.
     **/
-    this.clearLastURI = function()
-    {
+    this.clearLastURI = function() {
         lastURI = null;
     };
 
@@ -186,8 +172,7 @@ function MockMongoClient()
      * @return {String} Name of the last collection this client pretended to
      *      load.
     **/
-    this.getLastCollectionName = function()
-    {
+    this.getLastCollectionName = function() {
         return lastCollectionName;
     };
 
@@ -199,8 +184,7 @@ function MockMongoClient()
      *
      * @return {Object} Last selector provided to this mock database client.
     **/
-    this.getLastSelector = function()
-    {
+    this.getLastSelector = function() {
         return lastSelector;
     };
 
@@ -213,8 +197,7 @@ function MockMongoClient()
      * @return {Array or Object} The document or documents last provided to this
      *      fake client.
     **/
-    this.getLastDocuments = function()
-    {
+    this.getLastDocuments = function() {
         return lastDocuments;
     };
 
@@ -227,8 +210,7 @@ function MockMongoClient()
      *
      * @return {Object} Last options object provided to this client.
     **/
-    this.getLastOptions = function()
-    {
+    this.getLastOptions = function() {
         return lastOptions;
     };
 
@@ -240,8 +222,7 @@ function MockMongoClient()
      *
      * @return {String} Description of the last operation executed.
     **/
-    this.getLastOperation = function()
-    {
+    this.getLastOperation = function() {
         return lastOperation;
     };
 
@@ -256,8 +237,7 @@ function MockMongoClient()
      * @param {Object or Array} newNextResult The next value to return to client
      *      code. May also be primitive like Number.
     **/
-    this.prepareForNextUse = function(newNextResult)
-    {
+    this.prepareForNextUse = function(newNextResult) {
         nextResult = newNextResult;
         lastCollectionName = null;
         lastSelector = null;
