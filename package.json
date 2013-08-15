@@ -30,6 +30,7 @@
     "q": "~0.9",
     "rewire": "~1.1",
     "sinon": "~1.7",
-    "express": "~3.3.5"
+    "express": "~3.3.5",
+    "express-mock-request": "0.0.2"
   }
 }
