@@ -15,7 +15,10 @@ var app = express();
 
 require('./frontend_controller')(app);
 require('./api_controller')(app);
-app.listen(config.port);
-console.log("Listening on port " + config.port);
+
+if (! module.parent) {
+    app.listen(config.port);
+    console.log("Listening on port " + config.port);
+}
 
 
