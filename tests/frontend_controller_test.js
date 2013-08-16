@@ -1,15 +1,18 @@
 var test_util = require('./test_util');
-
-
-module.exports = {
-
-    /**
-     * Ensure that configuration settings are being cached in memory.
-     *
-     * @param {nodeunit.test} test Standard nodeunit test object describing the
-     *      test currently running.
-    **/
-    testIndex: function (test) {
-        test.done();
+var server = require('nodeunit-httpclient').create({
+    port: 3030,
+    path: '/',   //Base URL for requests
+    status: 200,    //Test each response is OK (can override later)
+    headers: {      //Test that each response must have these headers (can override later)
+        'content-type': 'text/html; charset=utf-8'
     }
-};
+});
+
+//Automatic tests on response object
+module.exports = {
+    testIndex: function(test) {
+        server.get(test, '/', {
+            body: 'Hello world.'
+        });
+    }
+}

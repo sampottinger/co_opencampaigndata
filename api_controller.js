@@ -7,6 +7,6 @@
 
 module.exports = function(app) {
     app.get('/v1', function(req, res) {
-        res.status(200).json({message: "Hello World."});
+        res.status(200).json({message: "Hello world."});
     });
 }
