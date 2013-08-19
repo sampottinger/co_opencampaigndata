@@ -13,6 +13,11 @@ Released under the "GNU GPL v3":http://www.gnu.org/licenses/gpl.html license.
 This alphabetically sorted list only lists principal contributors. A complete list is available in package.json.
 
 
+h3. Proposed API
+
+The proposed API is available at http://samnsparky.github.io/co_opencampaigndata/.
+
+
 h3. Background and Motivation
 
 Although Colorado enjoys excellent campaign finance reporting regulation, the state publishes that data through single file archives containing CSV reports. The Colorado Secretary of State Elections Division posts reports (contribution, expenditure, and loan data) through the "Colorado Transparency in Contribution and Expenditure Reporting (TRACER)":http://tracer.sos.colorado.gov/PublicSite/homepage.aspx system. This service provides programmatic access to that dataset along with filtering functionality.
