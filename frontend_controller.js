@@ -7,3 +7,9 @@
  * @author Sam Pottinger (samnsparky, http://gleap.org)
  * @license GNU GPL v3
 **/
+
+module.exports = function(app) {
+    app.get('/', function(req, res) {
+        res.send('Hello world.');
+    });
+}
