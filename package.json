@@ -31,6 +31,7 @@
     "rewire": "~1.1",
     "sinon": "~1.7",
     "express": "~3.3.5",
-    "nodeunit-httpclient": "~0.2.1"
+    "nodeunit-httpclient": "~0.2.1",
+    "jade": "~0.34.1"
   }
 }
