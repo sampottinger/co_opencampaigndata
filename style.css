@@ -1,0 +1,68 @@
+html
+{
+    font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; 
+    font-weight: 300;
+    font-size: 14px;
+}
+
+.url-desc
+{
+    margin-bottom: 50px;
+}
+
+.url
+{
+    font-size: 28px;
+    margin-bottom: 20px;
+}
+
+.meta-display
+{
+    margin-bottom: 10px;
+    min-height: 50px;
+}
+
+.meta-info
+{
+    float:left;
+    width: 200px;
+}
+
+.meta-info .type
+{
+    font-weight: bold;
+}
+
+.url-info
+{
+    margin-bottom: 10px;
+}
+
+.url-info .type
+{
+    font-weight: bold;
+}
+
+.param {
+    color: #707070;
+    margin-bottom: 5px;
+}
+
+.param .name {
+    color: black;
+}
+
+.info-header {
+    margin-bottom: 40px;
+}
+
+.info-header .tag-line {
+    font-weight: bold;
+    margin: 10px 0 10px 0;
+}
+
+.info-header h1 {
+    -webkit-margin-after: 0px;
+    margin-after: 0px;
+    margin-bottom: 0px;
+}

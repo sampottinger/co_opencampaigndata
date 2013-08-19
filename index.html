@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" type="text/css" href="./style.css">
+        <title>co_opencampaigndata working API spec</title>
+    </head>
+    <body>
+        <div class="info-header">
+            <h1>co_opencampaigndata working API spec</h1>
+            <div class="tag-line">
+                Easy programmatic access to Colorado's campaign finance data!
+            </div>
+            <div class="details">
+                Just sign up for an API key (link coming soon) and make GET requests at the endpoints below. All parameters except apiKey are optional.
+            </div>
+        </div>
+
+        <div class="url-desc">
+            <div class="url">GET /expenditures?apiKey={apiKey}</div>
+            <div class="meta-display">
+                <div class="meta-info">
+                    <div class="type">URL</div>
+                    <div class="body">/expenditures</div>
+                </div>
+                <div class="meta-info">
+                    <div class="type">Methods</div>
+                    <div class="body">GET</div>
+                </div>
+                <div class="meta-info">
+                    <div class="type">Alternatives</div>
+                    <div class="body">/expenditures.json (default), /expenditures.json</div>
+                </div>
+            </div>
+            <div class="url-info">
+                <div class="type">Description</div>
+                <div class="body">
+                    Retrieve reports for political committees.
+                </div>
+            </div>
+            <div class="url-info">
+                <div class="type">Allowed parameters</div>
+                <div class="body">
+                    <div class="param">
+                        <div class="name">{?offset}</div> The number of records to skip in the dataset.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?offset}</div> The number of records to skip in the dataset.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?limit}</div> The max number of records to return.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?commiteeID}</div> The id of the committee to filter for.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?minAmount}</div> Only include expenditures above or equal to this amount in US dollars.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?maxAmount}</div> Only include expenditures below or equal to this amount in US dollars.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?startDate}</div> Only include expenditures occurring on or after this date. Use ISO 8601 string.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?endDate}</div> Only include expenditures occurring on or before this date. Use ISO 8601 string.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?lastName}</div> Only include payments made to individuals with this last name or organizations with this name
+                    </div>
+                    <div class="param">
+                        <div class="name">{?firstName}</div> Only include payments made to individuals with this first name.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?middleInitial}</div> Only include payments made to individuals with this middle initial.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?address}</div> Only include expenses paid to entities at this address.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?city}</div> Only include expenses paid to entities in this city.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?state:2}</div> Only include expenses paid to entities in this state. Use abbreviation like CO.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?zip:2}</div> Only include expenses paid to entities in this zip code.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?recordID}</div> The ID of the record to return. This ID is unique within the dataset.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?startFiledDate}</div> Only include expenditures filed on or after this date. Use ISO 8601 string.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?endFiledDate}</div> Only include expenditures filed on or before this date. Use ISO 8601 string.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?expenditureType}</div> Only include expenditures with the given string expenditure type.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?paymentType}</div> Only include expenditure reports with the given string receipt type.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?disbursementType}</div> Only include reports with the given string disbursement type.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?electioneering}</div> If 1, only include expenditures marked as electioneering. If 0, only include expenditures not marked as electioneering. Use 0 or 1 to avoid localization.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?committeeType}</div> Only include expenses from committees with the given string type.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?committeeName}</div> Only include expenses from the committee with this name. Case insensitive. 
+                    </div>
+                    <div class="param">
+                        <div class="name">{?candidateName}</div> Only include expenses from candidates with the given name. Case insensitive.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?employer}</div> Only include expenses paid to those with the given employer.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?occupation}</div> Only include expenses paid to those with the given occupation.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?amended}</div> If 1, only include records that were amended. If 0, only include records that are amendments. Use 0 or 1 to avoid localization requirements.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?amendment}</div> If 1, only include records that are amendments. If 0, only include records that were not amendments. Use 0 or 1 to avoid localization requirements.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?amendedRecordID}</div> Only include records that amended the record with this recordID.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?jurisdiction}</div> Only include expenses reported as falling under the given jurisdiction.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?fields}</div> Comma separated list of record fields to include in the response JSON. See the example response for a listing of available fields.
+                    </div>
+                </div>
+            </div>
+            <div class="url-info">
+                <div class="type">Example Response</div>
+                <div class="body">
+                    <pre>
+                    {    
+                        "contributions": [{
+                            "committeeID": 19991400165,
+                            "amount": 50,
+                            "date": "2013-01-01 00:00:00",
+                            "lastName": "WHIDDEN",
+                            "firstName": "JAMES",
+                            "middleInitial": null,
+                            "suffix": null,
+                            "address": "9420 BRIAR VILLAGE POINT SUITE 101",
+                            "city": "COLORADO SPRINGS",
+                            "state": "CO",
+                            "zip": "80920",
+                            "explanation": "MONETARY CONTRIBUTION",
+                            "recordID": 3414601,
+                            "filedDate": "2013-04-15 00:00:00",
+                            "contributionType": "Monetary",
+                            "receiptType": "(Itemized) Check",
+                            "contributorType": "Individual",
+                            "electioneering": false,
+                            "committeeType": "Political Committee",
+                            "committeeName": "COLORADO CHIROPRACTIC PAC (CCA, CC-PAC)",
+                            "candidateName": null,
+                            "employer": "SELF-EMPLOYED",
+                            "occupation": "Healthcare/Medical",
+                            "amended": false,
+                            "amendment": true,
+                            "amendedRecord": "/contributions?recordID=3414601{&fields}",
+                            "jurisdiction": "STATE",
+                            "occupationComments": null,
+                            "href": "..."
+                        }],
+                        "meta": {
+                            "offset": 100,
+                            "next-href": "...",
+                            "result-set-size": 1000
+                        }
+                    }
+                    </pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="url-desc">
+            <div class="url">GET /contributions?apiKey={apiKey}</div>
+            <div class="meta-display">
+                <div class="meta-info">
+                    <div class="type">URL</div>
+                    <div class="body">/contributions</div>
+                </div>
+                <div class="meta-info">
+                    <div class="type">Methods</div>
+                    <div class="body">GET</div>
+                </div>
+                <div class="meta-info">
+                    <div class="type">Alternatives</div>
+                    <div class="body">/contributions.json (default), /contributions.json</div>
+                </div>
+            </div>
+            <div class="url-info">
+                <div class="type">Description</div>
+                <div class="body">
+                    Retrieve reports of political finance contributions.
+                </div>
+            </div>
+            <div class="url-info">
+                <div class="type">Allowed parameters</div>
+                <div class="body">
+                    <div class="param">
+                        <div class="name">{?offset}</div> The number of records to skip in the dataset.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?limit}</div> The max number of records to return.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?offset}</div> The number of records to skip in the dataset.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?commiteeID}</div> The id of the committee to filter for.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?minAmount}</div> Only include contributions above or equal to this amount in US dollars.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?maxAmount}</div> Only include contributions below or equal to this amount in US dollars.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?startDate}</div> Only include contributions occurring on or after this date. Use ISO 8601 string.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?endDate}</div> Only include contributions occurring on or before this date. Use ISO 8601 string.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?lastName}</div> Only include contributions from individuals with this last name or organization with this name.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?firstName}</div> The first name of the contributor to search for.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?middleInitial}</div> The middle initial of the contributor to search for.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?address}</div> Only include contributions with contributors from this address.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?city}</div> Only include contributions originating from this city.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?state:2}</div> Only include contributions originating from this state. Use abbreviation like CO.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?zip:5}</div> Only include contributions from this five digit zip code.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?recordID}</div> The ID of the record to return. This ID is unique within the dataset.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?startFiledDate}</div> Only include contributions filed after this date. Use ISO 8601 string.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?endFiledDate}</div> Only include contributions filed before this date. Use ISO 8601 string.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?contributionType}</div> Only include contributions with the given string contribution type.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?receiptType}</div> Only include contribution reports with the given string receipt type.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?contributorType}</div> Only include contributions from contributors of the given string type.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?electioneering}</div> If 1, only include contributions marked as electioneering. If 0, only include contributions not marked as electioneering. Use 0 or 1 to avoid localization.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?committeeType}</div> Only include contributions for committees with the given string type.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?committeeName}</div> Only include contributions made to the committee with this name. Case insensitive. 
+                    </div>
+                    <div class="param">
+                        <div class="name">{?candidateName}</div> Only include contributions marked as having gone to the candidate with this name. Case insensitive.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?employer}</div> Only include contributions from those with the given employer.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?occupation}</div> Only include contributions from those with the given occupation.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?amended}</div> If 1, only include records that were amended. If 0, only include records that are amendments. Use 0 or 1 to avoid localization requirements.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?amendment}</div> If 1, only include records that are amendments. If 0, only include records that were not amendments. Use 0 or 1 to avoid localization requirements.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?amendedRecordID}</div> Only include records that amended the record with this recordID.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?jurisdiction}</div> Only include contributions reported as falling under the given jurisdiction.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?fields}</div> Comma separated list of record fields to include in the response JSON. See the example response for a listing of available fields.
+                    </div>
+                </div>
+            </div>
+            <div class="url-info">
+                <div class="type">Example Response</div>
+                <div class="body">
+                <pre>
+        {    
+            "expenditures": [{
+                "committeeID": 20035622111,
+                "amount": 10.75,
+                "date": "2011-01-01 00:00:00",
+                "lastName": "KEY BANK",
+                "firstName": null,
+                "middleInitial": null,
+                "suffix": null,
+                "address": "PO BOX 22114",
+                "city": "ABANY,
+                "state": "NY",
+                "zip": "12201",
+                "explanation":null,
+                "recordID": 823889,
+                "filedDate": "2013-03-13 00:00:00",
+                "expenditureType": "Bank Fees",
+                "paymentType": "Electronic Pay System",
+                "disbursementType": "Individual",
+                "electioneering": false,
+                "committeeType": "Political Committee",
+                "committeeName": "COLORADO CHIROPRACTIC PAC (CCA, CC-PAC)",
+                "candidateName": null,
+                "employer": null,
+                "occupation": null,
+                "amended": false,
+                "amendment": false,
+                "amendedRecord": null,
+                "jurisdiction": "STATEWIDE"
+            }],
+            "meta": {
+                "offset": 100,
+                "next-href": "...",
+                "result-set-size": 1000
+            }
+        }
+                </pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="url-desc">
+            <div class="url">GET /loans?apiKey={apiKey}</div>
+            <div class="meta-display">
+                <div class="meta-info">
+                    <div class="type">URL</div>
+                    <div class="body">/loans?apiKey={apiKey}</div>
+                </div>
+                <div class="meta-info">
+                    <div class="type">Methods</div>
+                    <div class="body">GET</div>
+                </div>
+                <div class="meta-info">
+                    <div class="type">Alternatives</div>
+                    <div class="body">/loans.json (default), /loans.json</div>
+                </div>
+            </div>
+            <div class="url-info">
+                <div class="type">Description</div>
+                <div class="body">
+                    Retrieve reports of reports of loan payment activity.
+                </div>
+            </div>
+            <div class="url-info">
+                <div class="type">Allowed parameters</div>
+                <div class="body">
+                    <div class="param">
+                        <div class="name">{?offset}</div> The number of records to skip in the dataset.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?limit}</div> The max number of records to return.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?offset}</div> The number of records to skip in the dataset.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?commiteeID}</div> The id of the committee to filter for.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?minPaymentAmount}</div> Only include loan activity involving payment amounts above or equal to this threshold in US dollars.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?maxPaymentAmount}</div> Only include loan activity involving payment amounts below or equal to this amount in US dollars.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?startDate}</div> Only include payments occurring on or after this date. Use ISO 8601 string.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?endDate}</div> Only include payments occurring on or before this date. Use ISO 8601 string.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?name}</div> Only include payments from individuals or organizations with this name.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?address}</div> Only include payments with contributors from this address.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?city}</div> Only include payments originating from this city.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?state:2}</div> Only include payments originating from this state. Use abbreviation like CO.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?zip:5}</div> Only include payments from this five digit zip code.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?recordID}</div> The ID of the record to return. This ID is unique within the dataset.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?startFiledDate}</div> Only include payments reported after this date. Use ISO 8601 string.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?endFiledDate}</div> Only include payments recorded before this date. Use ISO 8601 string.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?loanType}</div> Only include payments with the given string contribution type.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?loanSourceType}</div> Only include activity on loans from this type (possible values include "business" and "candidate" case insensitive).
+                    </div>
+                    <div class="param">
+                        <div class="name">{?minLoanAmount}</div> Only include reports with loans greater than or equal to the given loan amount (in USD).
+                    </div>
+                    <div class="param">
+                        <div class="name">{?maxLoanAmount}</div> Only include reports with loans greater than or equal to the given loan amount (in USD).
+                    </div>
+                    <div class="param">
+                        <div class="name">{?minLoanStartDate}</div> Only include loans starting on or after this date. Use ISO 8601 string.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?maxLoanStartDate}</div> Only include loans start on or before this date. Use ISO 8601 string.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?committeeType}</div> Only include loans for the given string committee type.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?committeeName}</div> Only include loans for committees with the given name.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?minInterestRate}</div> Only include loans with an interest greater than or equal to this interest rate. This value should be less than or equal 1 and greater than or equal to 0.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?amended}</div> If 1, only include records that were amended. If 0, only include records that are amendments. Use 0 or 1 to avoid localization requirements.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?amendment}</div> If 1, only include records that are amendments. If 0, only include records that were not amendments. Use 0 or 1 to avoid localization requirements.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?amendedRecordID}</div> Only include records that amended the record with this recordID.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?jurisdiction}</div> Only include loan activity reported as falling under the given jurisdiction.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?loanBalance}</div> Only include loan activity reported as falling under the given jurisdiction.
+                    </div>
+                    <div class="param">
+                        <div class="name">{?fields}</div> Comma separated list of record fields to include in the response JSON. See the example response for a listing of available fields.
+                    </div>
+                </div>
+            </div>
+            <div class="url-info">
+                <div class="type">Example Response</div>
+                <div class="body">
+                    <pre>
+                    {    
+                        "loans": [{
+                            "committeeID": 20115022019,
+                            "paymentAmount": 250000,
+                            "date": "2013-01-01 00:00:00",
+                            "name": "Someone Somewhere",
+                            "address": "1234 SOMWHERE STREET SUITE 101",
+                            "city": "COLORADO SPRINGS",
+                            "state": "CO",
+                            "zip": "80920",
+                            "explanation": "MONETARY CONTRIBUTION",
+                            "recordID": 823307,
+                            "filedDate": "2013-01-15 00:00:00",
+                            "type": "P",
+                            "loanSourceType": "Candidate",
+                            "loanAmount": 339.93,
+                            "loanDate": "2012-07-11 00:00:00",
+                            "committeeType": "Candidate Committee",
+                            "committeeName": "Committee To Do Something",
+                            "candidate": "Joe Smith",
+                            "interestRate": 0.1,
+                            "interestPayment": 100,
+                            "amended": false,
+                            "amendment": false,
+                            "amendedRecord": null,
+                            "jurisdiction": "STATEWIDE",
+                            "loanBalance": 0,
+                            "href": "..."
+                        }],
+                        "meta": {
+                            "offset": 100,
+                            "next-href": "...",
+                            "result-set-size": 1000
+                        }
+                    }
+                    </pre>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
