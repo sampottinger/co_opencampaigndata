@@ -52,22 +52,22 @@ function MockMongoClient() {
                 lastOptions = options;
 
                 var mockedStream = {
-                    'stream': {
-                        'on': function(listenerType, callback) {
-                            if(listenerType === 'data')
-                            {
-                                var queryResultLen = nextResult.length;
-                                for(var i=0; i<queryResultLen; i++) {
-                                    callback(nextResult[i]);
+                    'stream': function () { return {
+                            'on': function(listenerType, callback) {
+                                if(listenerType === 'data')
+                                {
+                                    var queryResultLen = nextResult.length;
+                                    for(var i=0; i<queryResultLen; i++) {
+                                        callback(nextResult[i]);
+                                    }
+                                    queryReturned = true;
+                                    if(endStreamListener !== null)
+                                        callback();
                                 }
-                                queryReturned = true;
-                                if(endStreamListener !== null)
-                                    callback();
-                            }
-                            else if(listenerType === 'end') {
-                                callback();
-                                if(queryReturned)
-                                    callback();
+                                else if(listenerType === 'end') {
+                                    if(queryReturned)
+                                        callback();
+                                }
                             }
                         }
                     },
