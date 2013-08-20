@@ -186,6 +186,8 @@ exports.executeQuery = function (query, onNext, onEnd, onError) {
         skip = 0;
     if (resultLimit === undefined)
         resultLimit = DEFAULT_RESULT_LIMIT;
+    if (resultLimit > MAX_RESULT_LIMIT)
+        resultLimit = MAX_RESULT_LIMIT;
 
     // Create closure to perform query
     function performQuery (dbConnection) {
