@@ -114,7 +114,7 @@ module.exports = {
         var expectedOptions = {
             skip: 0,
             limit: TEST_DEFAULT_LIMIT
-        }
+        };
 
         mock_mongo_client.prepareForNextUse(testResult);
 
@@ -177,7 +177,7 @@ module.exports = {
         var expectedOptions = {
             skip: 100,
             limit: TEST_DEFAULT_LIMIT+1
-        }
+        };
 
         mock_mongo_client.prepareForNextUse(testResult);
 

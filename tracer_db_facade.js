@@ -110,10 +110,9 @@ function createDBQueryForParams (params, fieldIndex) {
     var paramValue;
     var indexEntry;
     var queryOp;
-    var indexEntry;
     var query = {};
 
-    for (paramName in params) {
+    for (var paramName in params) {
         paramValue = params[paramName];
         indexEntry = fieldIndex[paramName];
         queryOp = indexEntry.queryOp;
@@ -121,7 +120,7 @@ function createDBQueryForParams (params, fieldIndex) {
         if (indexEntry === undefined) {
             throw new Error(paramName + ' is an unexpected field.');
         } else {
-            paramEntry = query[indexEntry.dbField]
+            paramEntry = query[indexEntry.dbField];
             
             // Ensure an attribute for this parameter in the MongoDB selector
             if (paramEntry === undefined) {
