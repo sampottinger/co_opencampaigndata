@@ -6,9 +6,17 @@ var api_controller = rewire('../api_controller');
 var express = require('express');
 var app = express();
 
+var test_contribution_data = [
+  {"committeeID": 123, "lastName": "Smith", "firstName" : "Alice", "amount": 50},
+  {"committeeID": 23, "lastName": "Smith", "firstName" : "Bob", "amount": 10},
+]
+
 var testDbFacade = {
   executeQuery: function(query, onNext, onEnd, onError) {
-    console.log(query);
+    test_contribution_data.forEach(function(i) {
+      onNext(i);
+    });
+    onEnd();
   }
 };
 
@@ -27,13 +35,14 @@ module.exports = {
           test.done();
       });
     },
-    testContributionsJson: function (test) {
+    testContributionsJsonWithoutParams: function (test) {
       request(app).get('/v1/contributions.json')
         .set('Accept', 'application/json')
         .end(function (err, res) {
-          test.equal(res.statusCode, 501);
+          test.equal(res.statusCode, 200);
           test.equal(res.headers['content-type'], "application/json");
-          test.deepEqual(JSON.parse(res.text), {message: "API request unimplemented."});
+          test.deepEqual(JSON.parse(res.text), 
+            {contributions : test_contribution_data});
           test.done();
       });
     },
