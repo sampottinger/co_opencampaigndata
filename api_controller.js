@@ -5,9 +5,11 @@
  * @license GNU GPLv3
 **/
 
-module.exports = function(app) {
+var services = require('./services');
+
+module.exports = function(app, dbFacade) {
     app.get('/v1', function(req, res) {
-      res.status(501).json({message: "API request unimplemented."});
+      res.status(200).json(services());
     });
 
     app.get('/v1/contributions.json', function(req, res) {

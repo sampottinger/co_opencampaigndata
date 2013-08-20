@@ -1,64 +1,78 @@
 var test_util = require('./test_util');
-var server = require('nodeunit-httpclient').create({
-    port: 3030,
-    path: '/v1',   //Base URL for requests
-});
+var rewire = require('rewire');
+var services = require('../services');
+var request = require('supertest');
+var app = require('../server');
 
 //Automatic tests on response object
 module.exports = {
     testIndex: function (test) {
-      server.get(test, '/', function (res) {
-          test.equal(res.statusCode, 501);
+      request(app).get('/v1')
+        .set('Accept', 'application/json')
+        .end(function (err, res) {
+          test.equal(res.statusCode, 200);
           test.equal(res.headers['content-type'], "application/json");
-          test.deepEqual(res.data, {message: "API request unimplemented."});
+          test.deepEqual(JSON.parse(res.text), services());
           test.done();
-        });
+      });
     },
     testContributionsJson: function (test) {
-      server.get(test, '/contributions.json', function (res) {
+      request(app).get('/v1/contributions.json')
+        .set('Accept', 'application/json')
+        .end(function (err, res) {
           test.equal(res.statusCode, 501);
           test.equal(res.headers['content-type'], "application/json");
-          test.deepEqual(res.data, {message: "API request unimplemented."});
-          test.done()
+          test.deepEqual(JSON.parse(res.text), {message: "API request unimplemented."});
+          test.done();
       });
     },
     testContributionsCsv: function (test) {
-      server.get(test, '/contributions.csv', function (res) {
+      request(app).get('/v1/contributions.csv')
+        .set('Accept', 'text/csv')
+        .end(function (err, res) {
           test.equal(res.statusCode, 501);
           test.equal(res.headers['content-type'], "text/csv");
-          test.deepEqual(res.body, "Message\n501: API request unimplemented.");
+          test.deepEqual(res.text, "Message\n501: API request unimplemented.");
           test.done()
       });
     },
     testLoansJson: function (test) {
-      server.get(test, '/loans.json', function (res) {
+      request(app).get('/v1/loans.json')
+        .set('Accept', 'application/json')
+        .end(function (err, res) {
           test.equal(res.statusCode, 501);
           test.equal(res.headers['content-type'], "application/json");
-          test.deepEqual(res.data, {message: "API request unimplemented."});
+          test.deepEqual(JSON.parse(res.text), {message: "API request unimplemented."});
           test.done()
       });
     },
     testLoansCsv: function (test) {
-      server.get(test, '/loans.csv', function (res) {
+      request(app).get('/v1/loans.csv')
+        .set('Accept', 'text/csv')
+        .end(function (err, res) {
           test.equal(res.statusCode, 501);
           test.equal(res.headers['content-type'], "text/csv");
-          test.deepEqual(res.body, "Message\n501: API request unimplemented.");
+          test.deepEqual(res.text, "Message\n501: API request unimplemented.");
           test.done()
       });
     },
     testExpendituresJson: function (test) {
-      server.get(test, '/expenditures.json', function (res) {
+      request(app).get('/v1/expenditures.json')
+        .set('Accept', 'application/json')
+        .end(function (err, res) {
           test.equal(res.statusCode, 501);
           test.equal(res.headers['content-type'], "application/json");
-          test.deepEqual(res.data, {message: "API request unimplemented."});
+          test.deepEqual(JSON.parse(res.text), {message: "API request unimplemented."});
           test.done()
       });
     },
     testExpendituresCsv: function (test) {
-      server.get(test, '/expenditures.csv', function (res) {
+      request(app).get('/v1/expenditures.csv')
+        .set('Accept', 'text/csv')
+        .end(function (err, res) {
           test.equal(res.statusCode, 501);
           test.equal(res.headers['content-type'], "text/csv");
-          test.deepEqual(res.body, "Message\n501: API request unimplemented.");
+          test.deepEqual(res.text, "Message\n501: API request unimplemented.");
           test.done()
       });
     },
