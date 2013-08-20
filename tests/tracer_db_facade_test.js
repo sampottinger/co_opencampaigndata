@@ -294,5 +294,43 @@ module.exports = {
                 test.done();
             }
         ).fail(function (err) {test.done();});
+    },
+
+
+    /**
+     * Test refusual to execute a query with an unauthorized database field.
+     *
+     * Test that tracer_db_facade refuses to execute a query on an unauthorized
+     * collection.
+     *
+     * @param {nodeunit.test} test The nodeunit test this routine is running
+     *      under.
+    **/
+    testInvalidField: function (test) {
+        var testResult = [
+            {comitteeID: TEST_COMMITEE_ID_1},
+            {comitteeID: TEST_COMMITEE_ID_2}
+        ];
+        var testQuery = {
+            targetCollection: TEST_COLLECTION_NAME,
+            params: {
+                notAValidField: 1
+            },
+        };
+
+        mock_mongo_client.prepareForNextUse(testResult);
+
+        tracer_db_facade.executeQuery(
+            testQuery,
+            function (nextResult) {
+                test.ok(false, 'Unexpected success.');
+            },
+            function () {
+                test.ok(false, 'Unexpected success.');
+            },
+            function (error) {
+                test.done();
+            }
+        ).fail(function (err) {test.done();});
     }
 };
