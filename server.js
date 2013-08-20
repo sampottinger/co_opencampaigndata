@@ -12,7 +12,6 @@
 var config = require('./config.json')
 var express = require('express');
 var app = express();
-var dbFacade = require('./tracer_db_facade');
 
 app.use(express.static(__dirname + '/public'));
 app.use(express.errorHandler());
@@ -20,11 +19,10 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 
 require('./frontend_controller')(app);
-require('./api_controller')(app, dbFacade);
+require('./api_controller')(app);
 
 if (! module.parent) {
     app.listen(config.port);
     console.log("Listening on port " + config.port);
 }
 
-module.exports = app;

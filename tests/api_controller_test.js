@@ -2,7 +2,18 @@ var test_util = require('./test_util');
 var rewire = require('rewire');
 var services = require('../services');
 var request = require('supertest');
-var app = require('../server');
+var api_controller = rewire('../api_controller');
+var express = require('express');
+var app = express();
+
+var testDbFacade = {
+  executeQuery: function(query, onNext, onEnd, onError) {
+    console.log(query);
+  }
+};
+
+api_controller.__set__('tracer_db_facade', testDbFacade);
+api_controller(app);
 
 //Automatic tests on response object
 module.exports = {
