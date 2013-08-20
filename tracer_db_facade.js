@@ -15,6 +15,7 @@ var q = require('q');
 var env_config = require('./env_config');
 var tracer_db_config = require('./tracer_db_config.json');
 
+// Module behavioral constants
 var MAX_DB_CONNECTIONS = 2;
 var DB_TIMEOUT = 600;
 var DEFAULT_RESULT_LIMIT = 50;
@@ -121,10 +122,14 @@ function createDBQueryForParams (params, fieldIndex) {
             throw new Error(paramName + ' is an unexpected field.');
         } else {
             paramEntry = query[indexEntry.dbField]
+            
+            // Ensure an attribute for this parameter in the MongoDB selector
             if (paramEntry === undefined) {
                 paramEntry = {};
                 query[indexEntry.dbField] = paramEntry;
             }
+            
+            // Default to $eq if the field index does not provide a queryOp
             if (queryOp === undefined) {
                 paramEntry.$eq = paramValue;
             } else {
@@ -193,6 +198,7 @@ exports.executeQuery = function (query, onNext, onEnd, onError) {
                 return innerDeferred.promise;
             }
 
+            // Execute actual DB operation
             tracerCollection.find(
                 createDBQueryForParams(params, allowedFieldsForCol),
                 {skip: skip, limit: resultLimit},
@@ -202,6 +208,7 @@ exports.executeQuery = function (query, onNext, onEnd, onError) {
                         return;
                     }
 
+                    // Redirect stream events to client code
                     var stream = results.stream();
                     stream.on('data', onNext);
                     stream.on('end', onEnd);
