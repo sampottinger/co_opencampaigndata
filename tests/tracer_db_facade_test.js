@@ -41,8 +41,9 @@ tracer_db_facade.__set__('env_config.loadConfig', replacementLoadConfig);
 // Dependency injection on tracer_db_config
 var TEST_ALLOWED_FIELDS = {};
 TEST_ALLOWED_FIELDS[TEST_COLLECTION_NAME] = {
-    minAmount: {dbField: "amount", queryOp: "$gte"},
-    maxAmount: {dbField: "amount", queryOp: "$lte"}
+    minAmount: {dbField: 'amount', queryOp: '$gte'},
+    maxAmount: {dbField: 'amount', queryOp: '$lte'},
+    name: {dbField: 'name'}
 };
 tracer_db_facade.__set__('ALLOWED_FIELDS', TEST_ALLOWED_FIELDS);
 
@@ -171,8 +172,6 @@ module.exports = {
                 maxAmount: 5000
             },
             offset: 100,
-            minAmount: 1,
-            maxAmount: 5000,
             resultLimit: TEST_DEFAULT_LIMIT+1
         };
         var expectedOptions = {
@@ -196,6 +195,58 @@ module.exports = {
                 test.deepEqual(
                     mock_mongo_client.getLastOptions(),
                     expectedOptions
+                );
+                test.equal(
+                    mock_mongo_client.getLastCollectionName(),
+                    TEST_COLLECTION_NAME
+                );
+                test.done();
+            },
+            function (error) {
+                test.ok(false, 'Unexpected stream error: ' + error);
+                test.done();
+            }
+        ).fail(function (err) {test.ok(false, err); test.done();});
+    },
+
+
+    /**
+     * Test that tracer_db_facade will default to $eq for a query operation.
+     *
+     * Test that tracer_db_facade will use $eq for a query operation if none is
+     * explicitly provided.
+     *
+     * @param {nodeunit.test} test The nodeunit test that this routine is
+     *      running under.
+    **/
+    testDefaultQueryOp: function (test) {
+        var results = [];
+        var testResult = [
+            {comitteeID: TEST_COMMITEE_ID_1},
+            {comitteeID: TEST_COMMITEE_ID_2}
+        ];
+        var expectedSelector = {
+            name: {$eq: 'Test Name'}
+        };
+        var testQuery = {
+            targetCollection: TEST_COLLECTION_NAME,
+            params: {
+                name: 'Test Name'
+            }
+        };
+
+        mock_mongo_client.prepareForNextUse(testResult);
+
+        tracer_db_facade.executeQuery(
+            testQuery,
+            function (nextResult) {
+                results.push(nextResult);
+            },
+            function () {
+                test.deepEqual(results, testResult);
+                test.deepEqual(
+                    mock_mongo_client.getLastSelector(),
+                    expectedSelector
                 );
                 test.equal(
                     mock_mongo_client.getLastCollectionName(),
