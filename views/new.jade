@@ -1,0 +1,20 @@
+extends layout
+
+block content
+  .jumbotron
+    .container
+      h1 co.opencampaigndata.org
+      p Welcome to the OpenCampaignData site for Colorado's campaign finance API.
+  .container
+    .row
+      .col-lg-12
+        .lead 
+          p We just need an email address to get you started:
+          form.form-inline(method="POST", action="/keys", role="form")
+            .form-group
+              label.sr-only(for="email") Email address
+              input.form-control#email(name="email", type="email", size="50", placeholder="Enter email")
+            button.btn.btn-primary(type="submit") Get a Key
+        a(href="/") Home
+
+

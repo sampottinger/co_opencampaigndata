@@ -4,9 +4,6 @@
  * @author Sam Pottinger (samnsparky, http://gleap.org)
 **/
 
-// TODO: This is experimental and in progress! Do not rely on this code yet!
-// WARNING: This is experimental and in progress! Do not rely on this code yet!
-
 var q = require('Q');
 var rewire = require('rewire');
 var sinon = require('sinon');
@@ -117,7 +114,7 @@ exports.testCanFulfillQuery = function(test) {
     var apiKeyUsagePromise = q.fcall(function () {return retLog;});
     findAPIKeyUsageStub.returns(apiKeyUsagePromise);
 
-    account_manager.canFulfillQuery(partialAccount, partialQuery)
+    account_manager.canFulfillQueryWithThrottle(partialAccount, partialQuery)
     .then(function (canFulfillQuery) {
         test.equal(canFulfillQuery, true);
         test.done();
@@ -149,7 +146,7 @@ exports.testCannotFulfillQuery = function(test) {
     var apiKeyUsagePromise = q.fcall(function () {return retLog;});
     findAPIKeyUsageStub.returns(apiKeyUsagePromise);
 
-    account_manager.canFulfillQuery(partialAccount, partialQuery)
+    account_manager.canFulfillQueryWithThrottle(partialAccount, partialQuery)
     .then(function (canFulfillQuery) {
         test.equal(canFulfillQuery, false);
         test.done();
@@ -193,7 +190,7 @@ exports.testCanFulfillQueryDates = function(test) {
     var apiKeyUsagePromise = q.fcall(function () {return retLog;});
     findAPIKeyUsageStub.returns(apiKeyUsagePromise);
 
-    account_manager.canFulfillQuery(partialAccount, partialQuery)
+    account_manager.canFulfillQueryWithThrottle(partialAccount, partialQuery)
     .then(function (canFulfillQuery) {
         var matchingDates = findAPIKeyUsageStub.calledWith(TEST_API_KEY,
             startDateMatch, endDateMatch);

@@ -78,16 +78,16 @@
             "amendedRecordID": {"dbField": "amendedRecordID"},
             "jurisdiction": {"dbField": "jurisdiction"},
             "loanBalance": {"dbField": "loanBalance"},
-            "minPaymentAmount": {"dbField": "minPaymentAmount", "queryOp": "$gte"},
-            "maxPaymentAmount": {"dbField": "maxPaymentAmount", "queryOp": "$lte"},
-            "minLoanAmount": {"dbField": "minLoanAmount", "queryOp": "$gte"},
-            "maxLoanAmount": {"dbField": "maxLoanAmount", "queryOp": "$lte"},
-            "minLoanStartDate": {"dbField": "minLoanStartDate", "queryOp": "$gte"},
-            "maxLoanStartDate": {"dbField": "maxLoanStartDate", "queryOp": "$lte"},
-            "startFiledDate": {"dbField": "startFiledDate", "queryOp": "$gte"},
-            "endFiledDate": {"dbField": "endFiledDate", "queryOp": "$lte"},
-            "startDate": {"dbField": "startDate", "queryOp": "$gte"},
-            "endDate": {"dbField": "endDate", "queryOp": "$lte"}
+            "minPaymentAmount": {"dbField": "paymentAmount", "queryOp": "$gte"},
+            "maxPaymentAmount": {"dbField": "paymentAmount", "queryOp": "$lte"},
+            "minLoanAmount": {"dbField": "loanAmount", "queryOp": "$gte"},
+            "maxLoanAmount": {"dbField": "loanAmount", "queryOp": "$lte"},
+            "minLoanStartDate": {"dbField": "loanStartDate", "queryOp": "$gte"},
+            "maxLoanStartDate": {"dbField": "loanStartDate", "queryOp": "$lte"},
+            "startFiledDate": {"dbField": "filedDate", "queryOp": "$gte"},
+            "endFiledDate": {"dbField": "filedDate", "queryOp": "$lte"},
+            "startDate": {"dbField": "date", "queryOp": "$gte"},
+            "endDate": {"dbField": "date", "queryOp": "$lte"}
         }
     }
 }
