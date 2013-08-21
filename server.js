@@ -17,6 +17,7 @@ app.use(express.static(__dirname + '/public'));
 app.use(express.errorHandler());
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
+app.use(express.bodyParser());
 
 require('./frontend_controller')(app);
 require('./api_controller')(app);
