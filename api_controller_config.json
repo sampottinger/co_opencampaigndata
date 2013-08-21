@@ -1,0 +1,64 @@
+{
+    "defaultFields": {
+        "contributions": [
+            "recordID",
+            "committeeID",
+            "amount",
+            "firstName",
+            "lastName"
+        ],
+        "expenditures": [
+            "recordID",
+            "committeeID",
+            "amount",
+            "firstName",
+            "lastName"
+        ],
+        "loans": [
+            "recordID",
+            "committeeID",
+            "amount",
+            "firstName",
+            "lastName"
+        ]
+    },
+    "numberParams": {
+        "contributions": [
+            "commiteeID",
+            "recordID",
+            "amendedRecordID",
+            "minAmount",
+            "maxAmount"
+        ],
+        "expenditures": [
+            "commiteeID",
+            "recordID",
+            "amendedRecordID",
+            "minAmount",
+            "maxAmount"
+        ],
+        "loans": [
+            "commiteeID",
+            "recordID",
+            "minInterestRate",
+            "minPaymentAmount",
+            "maxPaymentAmount",
+            "minLoanAmount",
+            "maxLoanAmount"
+        ]
+    },
+    "boolParams": {
+        "contributions": [
+            "amended",
+            "amendment"
+        ],
+        "expenditures": [
+            "amended",
+            "amendment"
+        ],
+        "loans": [
+            "amended",
+            "amendment"
+        ]
+    }
+}

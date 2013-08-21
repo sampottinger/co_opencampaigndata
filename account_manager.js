@@ -106,7 +106,7 @@ function createNewAccount(email, apiKey, permissions) {
  * @return {Q.promise} Promise that resolves to the Account record for the user
  *      with the given email address.
 **/
-exports.getOrCreateUserByEmail = function(email) {
+exports.getOrCreateUserByEmail = function (email) {
     var deferred = q.defer();
 
     account_db_facade.getUserByEmail(email).then(function(account){
@@ -134,11 +134,16 @@ exports.getOrCreateUserByEmail = function(email) {
 };
 
 
+exports.getUserByAPIKey = function (apiKey) {
+    return account_db_facade.getUserByAPIKey(apiKey);
+};
+
+
 /**
- * Determine if an account can make the given query.
+ * Determine if an account can make the given query given throttling.
  *
  * Determine if a user account can make the given request given throttling
- * (request rate limiting) and permissions.
+ * (request rate limiting).
  *
  * @param {Object} account Object describing the Account that is making the
  *      given query. Should be an Account Object as described in the structures
@@ -149,7 +154,7 @@ exports.getOrCreateUserByEmail = function(email) {
  * @return {Q.promise} Promise that resolves to true if the user can fulfill
  *      the given query and false otherwise.
 **/
-exports.canFulfillQuery = function(account, query) {
+exports.canFulfillQueryWithThrottle = function(account, query) {
     var deferred = q.defer();
     var lastMinuteMillis = new Date().getTime() - MILLIS_PER_MINUTE;
     var lastMinute = new Date(lastMinuteMillis);

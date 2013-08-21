@@ -247,10 +247,10 @@ function getUserByAPIKey(collection, apiKey) {
     collection.findOne({apiKey: apiKey}, function (err, doc) {
         if (err) {
             var message = 'Error while searching for user by key: ' + err;
-            throw new Error(message);
+            deferred.reject(message);
+        } else {
+            deferred.resolve(doc);
         }
-
-        deferred.resolve(doc);
     });
 
     return deferred.promise;

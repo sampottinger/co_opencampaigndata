@@ -5,145 +5,220 @@
  * @license GNU GPLv3
 **/
 
-var services = require('./services');
-var formatter = require('./data_formatter');
+var q = require('q');
 
+var services = require('./services');
+var data_formatter = require('./data_formatter');
 var tracer_db_facade = require('./tracer_db_facade');
 var account_manager = require('./account_manager');
+var api_controller_config = require('./api_controller_config.json');
 
-var default_fields = {
-  contributions: [
-    "recordID",
-    "committeeID",
-    "amount",
-    "firstName",
-    "lastName"
-  ],
-  expenditures: [
-    "recordID",
-    "committeeID",
-    "amount",
-    "firstName",
-    "lastName"
-  ],
-  loans: [
-    "recordID",
-    "committeeID",
-    "amount",
-    "firstName",
-    "lastName"
-  ],
+var DEFAULT_FIELDS = api_controller_config.defaultFields;
+var NUMBER_PARAMS = api_controller_config.numberParams;
+var BOOL_PARAMS = api_controller_config.boolParams;
+
+var MIME_INFO = {
+    'json': 'application/json',
+    'csv': 'text/csv'
 };
 
 
-var createQuery = function(collection, params) {
-  var offset = params.offset || 0;
-  var limit = params.limit || 500;
-  delete params.offset;
-  delete params.limit;
-
-  return {
-    targetCollection: collection,
-    params: params,
-    offset: offset,
-    resultLimit: limit
-  };
+function parseBool (val) {
+    if (val === '1')
+        return true;
+    else
+        return false;
 }
 
-var getFields = function(collection, params) {
-  var fields = [];
-    if(params.fields !== undefined) {
-      fields = params.fields.split(',');
-    } else {
-      fields = default_fields[collection];
+
+function parseRequestQueryInfo (collection, rawQuery) {
+    var params = {};
+    var query = {params: params, targetCollection: collection};
+    var fields = DEFAULT_FIELDS[collection];
+    var numParams = NUMBER_PARAMS[collection];
+    var boolParams = NUMBER_PARAMS[collection];
+    var apiKey;
+
+    query.offset = 0;
+
+    for (var componentName in rawQuery) {
+        var componentValue = rawQuery[componentName];
+
+        if (componentName === 'apiKey') {
+            apiKey = componentValue;
+        } else if (componentName === 'offset') {
+            query.offset = componentValue;
+        } else if (componentName === 'limit') {
+            query.resultLimit = componentValue;
+        } else if (componentName === 'fields') {
+            fields = componentValue.split(',');
+        } else if (numParams.indexOf(componentName) != -1) {
+            params[componentName] = parseFloat(componentValue);
+        } else if (boolParams.indexOf(componentName) != -1) {
+            params[componentName] = parseBool(componentValue);
+        } else {
+            params[componentName] = componentValue;
+        }
     }
-    return fields;
+
+    return {query: query, fields: fields, apiKey: apiKey};
 }
 
-var updateQueryWithOffset = function(req, limit) {
-  var newUrl = "http://" + req.headers.host + req._parsedUrl.pathname;
-  var newParams = [];
-  if(req.query.offset == undefined) {
-    req.query.offset = limit;
-  } else {
-    req.query.offset += limit;
-  }
-  for(var i in req.query) {
-    newParams.push(i + "=" + req.query[i]);
-  }
-  return newParams.join("&");
+
+function checkUserCredentials (res, account, query) {
+    var deferred = q.defer();
+
+    if (account === null) {
+        res.status(401).json({message: 'Invalid API key.'});
+        deferred.resolve(false);
+        return deferred.promise;
+    }
+
+    account_manager.canFulfillQueryWithThrottle(account, query)
+    .then(function (canFulfill) {
+        if (canFulfill) {
+            deferred.resolve(true);
+        } else {
+            res.status(429).json({message: 'Rate limit reached.'});
+            deferred.resolve(false);
+        }
+    });
+
+    return deferred.promise;
 }
 
-var handleJsonRequest = function(collection, req, res) {
-    var results = [];
-    var params = req.query;
-    var key = params.apiKey;
-    var object = {};
-    var fields = getFields(collection, params);
-    var query = createQuery(collection,params);
 
-    tracer_db_facade.executeQuery(
-        query,
-        function(next) {
-            results.push(next);
-        },
-        function() {
-            formatter.format('json',results,fields, collection)
-            .then(function(json) {
-                var object = JSON.parse(json)
-                object.meta = { offset: query.offset, 
-                    'result-set-size': query.resultLimit,
-                    'next-href': "http://" + req.headers.host + "?" + updateQueryWithOffset(req, query.resultLimit)
-                };
-                res.status(200).json(object);
-            });
-        }, function(msg) { res.status(500).json({message: msg}); }
+function updateQueryWithOffset (req, offset) {
+    var newUrl = "http://" + req.headers.host + req._parsedUrl.pathname;
+    var newParams = [];
+    if(req.query.offset == undefined) {
+        req.query.offset = offset;
+    } else {
+        var newOffset = parseInt(req.query.offset) + offset;
+        req.query.offset = newOffset;
+    }
+    for(var i in req.query) {
+        newParams.push(i + "=" + req.query[i]);
+    }
+    return newParams.join("&");
+}
+
+
+function serializeResponse (req, query, results, fields, format, resource) {
+
+    var nextHref = 'http://' + req.headers.host + '?';
+    nextHref += updateQueryWithOffset(req, results.length);
+
+    var metaInfo = {
+        offset: query.offset,
+        'next-href': nextHref
+    };
+
+    return data_formatter.format(
+        format,
+        results,
+        fields,
+        resource,
+        metaInfo
+    )
+}
+
+
+function sendResponse (res, serializedResponse, serializationFormat) {
+    res.status(200)
+    .set('content-type', MIME_INFO[serializationFormat])
+    .send(serializedResponse);
+}
+
+
+function handleV1Request (req, res, resource, collection, format) {
+    var queryInfo = parseRequestQueryInfo(collection, req.query);
+    var apiKey = queryInfo.apiKey;
+    var query = queryInfo.query;
+    var fields = queryInfo.fields;
+
+    var genericErrorHandler = function (msg) {
+        res.status(500).json({message: msg});
+    };
+
+    var checkUserCredentialsClosure = function (account) {
+        return checkUserCredentials(res, account, query);
+    };
+
+    var serializeResponseClosure = function (results) {
+        return serializeResponse(
+            req,
+            query,
+            results,
+            fields,
+            format,
+            resource
+        );
+    };
+
+    var sendResponseClosure = function (serializedResponse) {
+        return sendResponse(res, serializedResponse, format);
+    };
+
+    account_manager.getUserByAPIKey(apiKey)
+    .then(checkUserCredentialsClosure, genericErrorHandler)
+    .then(function (userCanExecuteQuery) {
+
+        if (!userCanExecuteQuery)
+            return;
+
+        tracer_db_facade.executeQuery(query)
+        .then(serializeResponseClosure, genericErrorHandler)
+        .then(sendResponseClosure, genericErrorHandler)
+
+    }, genericErrorHandler);
+}
+
+
+function createV1Handler (resource, collection, format) {
+    return function (req, res) {
+        handleV1Request(req, res, resource, collection, format);
+    };
+}
+
+
+function createAndRegisterV1Handlers (app, resource, collection) {
+    app.get(
+        '/' + resource,
+        createV1Handler(resource, collection, 'json')
+    );
+    
+    app.get(
+        '/v1/' + resource,
+        createV1Handler(resource, collection, 'json')
+    );
+    
+    app.get(
+        '/' + resource + '.json',
+        createV1Handler(resource, collection, 'json')
+    );
+    
+    app.get(
+        '/v1/' + resource + '.json',
+        createV1Handler(resource, collection, 'json')
+    );
+    
+    app.get(
+        '/' + resource + '.csv',
+        createV1Handler(resource,collection, 'csv')
+    );
+    
+    app.get(
+        '/v1/' + resource + '.csv',
+        createV1Handler(resource,collection, 'csv')
     );
 }
 
-var handleCsvRequest = function(collection, req, res) {
-  var results = [];
-  var params = req.query;
-  var key = params.apiKey;
-  var fields = getFields(collection, params);
-  var query = createQuery(collection,params);
-
-  tracer_db_facade.executeQuery(query,function(next) {
-    results.push(next);
-  }, function() {
-    formatter.format('csv',results,fields)
-      .then(function(csv) {
-        res.status(200).set('content-type','text/csv').send(csv);
-      });
-  }, function(msg) {
-    res.status(500).json({message: msg});
-  });
-}
 
 module.exports = function(app) {
     app.get('/v1', function(req, res) {
       res.status(200).json(services());
     });
 
-    app.get('/v1/contributions.json', function(req, res) {
-      handleJsonRequest('contributions',req, res);
-    });
-
-    app.get('/v1/contributions.csv', function(req, res) {
-      handleCsvRequest('contributions',req, res);
-    });
-
-    app.get('/v1/loans.json', function(req, res) {
-      handleJsonRequest('loans', req, res);
-    });
-    app.get('/v1/loans.csv', function(req, res) {
-      handleCsvRequest('loans',req, res);
-    });
-
-    app.get('/v1/expenditures.json', function(req, res) {
-      handleJsonRequest('expenditures', req, res);
-    });
-    app.get('/v1/expenditures.csv', function(req, res) {
-      handleCsvRequest('expenditures',req, res);
-    });
+    createAndRegisterV1Handlers(app, 'expenditures', 'expenditures');
 }
