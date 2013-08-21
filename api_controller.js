@@ -23,7 +23,7 @@ var MIME_INFO = {
 };
 
 
-function parseBool (val) {
+function parseInternationalBool (val) {
     if (val === '1')
         return true;
     else
@@ -36,7 +36,7 @@ function parseRequestQueryInfo (collection, rawQuery) {
     var query = {params: params, targetCollection: collection};
     var fields = DEFAULT_FIELDS[collection];
     var numParams = NUMBER_PARAMS[collection];
-    var boolParams = NUMBER_PARAMS[collection];
+    var boolParams = BOOL_PARAMS[collection];
     var apiKey;
 
     query.offset = 0;
@@ -55,7 +55,7 @@ function parseRequestQueryInfo (collection, rawQuery) {
         } else if (numParams.indexOf(componentName) != -1) {
             params[componentName] = parseFloat(componentValue);
         } else if (boolParams.indexOf(componentName) != -1) {
-            params[componentName] = parseBool(componentValue);
+            params[componentName] = parseInternationalBool(componentValue);
         } else {
             params[componentName] = componentValue;
         }
