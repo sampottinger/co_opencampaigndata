@@ -27,8 +27,8 @@ mock_mongo_client = new mock_mongodb.MockMongoClient();
 
 // Dependency injection for runtime environment
 var replacementConfig = {
-    ACCOUNT_DB_URI: TEST_ACCOUNT_DB_URI,
-    LOGGING_DB_URI: TEST_USAGES_DB_URI
+    accountDBURI: TEST_ACCOUNT_DB_URI,
+    loggingDBURI: TEST_USAGES_DB_URI
 };
 var replacementLoadConfig = function () {
     var deferred = q.defer();
