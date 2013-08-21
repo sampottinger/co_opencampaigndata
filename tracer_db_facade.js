@@ -13,7 +13,7 @@ var mongodb = require('mongodb');
 var q = require('q');
 
 var env_config = require('./env_config');
-var tracer_db_config = require('./tracer_db_config.json');
+var tracer_db_config = require('./config/tracer_db_config.json');
 
 // Module behavioral constants
 var MAX_DB_CONNECTIONS = 2;

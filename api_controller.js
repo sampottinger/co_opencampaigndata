@@ -11,7 +11,7 @@ var services = require('./services');
 var data_formatter = require('./data_formatter');
 var tracer_db_facade = require('./tracer_db_facade');
 var account_manager = require('./account_manager');
-var api_controller_config = require('./api_controller_config.json');
+var api_controller_config = require('./config/api_controller_config.json');
 
 var DEFAULT_FIELDS = api_controller_config.defaultFields;
 var NUMBER_PARAMS = api_controller_config.numberParams;
