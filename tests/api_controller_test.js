@@ -1,65 +1,142 @@
 var test_util = require('./test_util');
-var server = require('nodeunit-httpclient').create({
-    port: 3030,
-    path: '/v1',   //Base URL for requests
-});
+var rewire = require('rewire');
+var services = require('../services');
+var request = require('supertest');
+var api_controller = rewire('../api_controller');
+var express = require('express');
+var app = express();
+var url = require('url');
+
+var test_contribution_data = [
+  {"recordID": 1,"committeeID": 123, "lastName": "Smith", "firstName" : "Alice", "amount": 50},
+  {"recordID": 2,"committeeID": 23,  "lastName": "Smith", "firstName" : "Bob",   "amount": 10},
+];
+
+var testDbFacade = {
+  executeQuery: function(query, onNext, onEnd, onError) {
+    test_contribution_data.forEach(function(i) {
+      onNext(i);
+    });
+    onEnd();
+  }
+};
+
+api_controller.__set__('tracer_db_facade', testDbFacade);
+api_controller(app);
 
 //Automatic tests on response object
 module.exports = {
     testIndex: function (test) {
-      server.get(test, '/', function (res) {
-          test.equal(res.statusCode, 501);
+      request(app).get('/v1')
+        .set('Accept', 'application/json')
+        .end(function (err, res) {
+          test.equal(res.statusCode, 200);
           test.equal(res.headers['content-type'], "application/json");
-          test.deepEqual(res.data, {message: "API request unimplemented."});
+          test.deepEqual(JSON.parse(res.text), services());
           test.done();
-        });
+      });
     },
     testContributionsJson: function (test) {
-      server.get(test, '/contributions.json', function (res) {
-          test.equal(res.statusCode, 501);
+      request(app).get('/v1/contributions.json')
+        .set('Accept', 'application/json')
+        .end(function (err, res) {
+          var result = JSON.parse(res.text);
+          var next_href = url.parse(result.meta['next-href'], true);
+          test.equal(res.statusCode, 200);
           test.equal(res.headers['content-type'], "application/json");
-          test.deepEqual(res.data, {message: "API request unimplemented."});
-          test.done()
+          test.deepEqual(result.contributions, 
+            test_contribution_data);
+          test.equal(result.meta.offset, 0);
+          test.equal(result.meta['result-set-size'], 500);
+          test.equal(next_href.query.offset, 500);
+          test.done();
+      });
+    },
+    testContributionsJsonWithFields: function (test) {
+      request(app).get('/v1/contributions.json?fields=committeeID,amount')
+        .set('Accept', 'application/json')
+        .end(function (err, res) {
+          var result = JSON.parse(res.text);
+          var next_href = url.parse(result.meta['next-href'], true);
+          test.equal(res.statusCode, 200);
+          test.equal(res.headers['content-type'], "application/json");
+          test.deepEqual(result.contributions,
+            [ { committeeID: 123, amount: 50 },
+              { committeeID: 23, amount: 10 } ]);
+          test.equal(result.meta.offset, 0);
+          test.equal(result.meta['result-set-size'], 500);
+          test.equal(next_href.query.offset, 500);
+          test.done();
       });
     },
     testContributionsCsv: function (test) {
-      server.get(test, '/contributions.csv', function (res) {
-          test.equal(res.statusCode, 501);
+      request(app).get('/v1/contributions.csv')
+        .set('Accept', 'text/csv')
+        .end(function (err, res) {
+          test.equal(res.statusCode, 200);
           test.equal(res.headers['content-type'], "text/csv");
-          test.deepEqual(res.body, "Message\n501: API request unimplemented.");
-          test.done()
+          test.deepEqual(res.text, 'recordID,committeeID,amount,firstName,lastName\n1,123,50,"Alice","Smith"\n2,23,10,"Bob","Smith"');
+          test.done();
+      });
+    },
+    testContributionsCsvWithFields: function (test) {
+      request(app).get('/v1/contributions.csv?fields=committeeID,amount')
+        .set('Accept', 'text/csv')
+        .end(function (err, res) {
+          test.equal(res.statusCode, 200);
+          test.equal(res.headers['content-type'], "text/csv");
+          test.deepEqual(res.text, 'committeeID,amount\n123,50\n23,10');
+          test.done();
       });
     },
     testLoansJson: function (test) {
-      server.get(test, '/loans.json', function (res) {
-          test.equal(res.statusCode, 501);
+      request(app).get('/v1/loans.json')
+        .set('Accept', 'application/json')
+        .end(function (err, res) {
+          var result = JSON.parse(res.text);
+          var next_href = url.parse(result.meta['next-href'], true);
+          test.equal(res.statusCode, 200);
           test.equal(res.headers['content-type'], "application/json");
-          test.deepEqual(res.data, {message: "API request unimplemented."});
-          test.done()
+          test.deepEqual(result.loans, test_contribution_data);
+          test.equal(result.meta.offset, 0);
+          test.equal(result.meta['result-set-size'], 500);
+          test.equal(next_href.query.offset, 500);
+          test.done();
       });
     },
     testLoansCsv: function (test) {
-      server.get(test, '/loans.csv', function (res) {
-          test.equal(res.statusCode, 501);
+      request(app).get('/v1/loans.csv')
+        .set('Accept', 'text/csv')
+        .end(function (err, res) {
+          test.equal(res.statusCode, 200);
           test.equal(res.headers['content-type'], "text/csv");
-          test.deepEqual(res.body, "Message\n501: API request unimplemented.");
-          test.done()
+          test.deepEqual(res.text, 'recordID,committeeID,amount,firstName,lastName\n1,123,50,"Alice","Smith"\n2,23,10,"Bob","Smith"');
+          test.done();
       });
     },
     testExpendituresJson: function (test) {
-      server.get(test, '/expenditures.json', function (res) {
-          test.equal(res.statusCode, 501);
+      request(app).get('/v1/expenditures.json')
+        .set('Accept', 'application/json')
+        .end(function (err, res) {
+          var result = JSON.parse(res.text);
+          var next_href = url.parse(result.meta['next-href'], true);
+          test.equal(res.statusCode, 200);
           test.equal(res.headers['content-type'], "application/json");
-          test.deepEqual(res.data, {message: "API request unimplemented."});
-          test.done()
+          test.deepEqual(result.expenditures, test_contribution_data);
+          test.equal(result.meta.offset, 0);
+          test.equal(result.meta['result-set-size'], 500);
+          test.equal(next_href.query.offset, 500);
+          test.done();
       });
     },
     testExpendituresCsv: function (test) {
-      server.get(test, '/expenditures.csv', function (res) {
-          test.equal(res.statusCode, 501);
+      request(app).get('/v1/expenditures.csv')
+        .set('Accept', 'text/csv')
+        .end(function (err, res) {
+          test.equal(res.statusCode, 200);
           test.equal(res.headers['content-type'], "text/csv");
-          test.deepEqual(res.body, "Message\n501: API request unimplemented.");
-          test.done()
+          test.deepEqual(res.text, 'recordID,committeeID,amount,firstName,lastName\n1,123,50,"Alice","Smith"\n2,23,10,"Bob","Smith"');
+          test.done();
       });
     },
 }
