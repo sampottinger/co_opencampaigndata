@@ -220,5 +220,7 @@ module.exports = function(app) {
       res.status(200).json(services());
     });
 
+    createAndRegisterV1Handlers(app, 'contributions', 'contributions');
     createAndRegisterV1Handlers(app, 'expenditures', 'expenditures');
+    createAndRegisterV1Handlers(app, 'loans', 'loans');
 }

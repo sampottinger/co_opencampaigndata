@@ -2,24 +2,23 @@
     "defaultFields": {
         "contributions": [
             "recordID",
-            "committeeID",
+            "commiteeID",
             "amount",
             "firstName",
             "lastName"
         ],
         "expenditures": [
             "recordID",
-            "committeeID",
+            "commiteeID",
             "amount",
             "firstName",
             "lastName"
         ],
         "loans": [
             "recordID",
-            "committeeID",
-            "amount",
-            "firstName",
-            "lastName"
+            "commiteeID",
+            "loanAmount",
+            "name"
         ]
     },
     "numberParams": {
