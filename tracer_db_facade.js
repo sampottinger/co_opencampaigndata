@@ -210,18 +210,9 @@ exports.executeQuery = function (query, onNext, onEnd, onError) {
                     }
 
                     // Redirect stream events to client code
-                    var stream = results.toArray(
-                        function (err, results) {
-                            if (err) {
-                                throw new Error(err);
-                            }
-                            var numResults = results.length;
-                            for (var i=0; i<numResults; i++) {
-                                onNext(results[i]);
-                            }
-                            onEnd();
-                        }
-                    );
+                    var stream = results.stream()
+                    stream.on('data', onNext);
+                    stream.on('end', onEnd);
                     innerDeferred.resolve(dbConnection);
                 }
             );
