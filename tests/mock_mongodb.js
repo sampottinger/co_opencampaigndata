@@ -5,10 +5,6 @@
  * @license GNU GPL v3
 **/
 
-// TODO: This is experimental and in progress! Do not rely on this code yet!
-// WARNING: This is experimental and in progress! Do not rely on this code yet!
-// TODO: This form of dependency injection is terribly terribly messy.
-
 /**
  * Mock version of mongodb.MongoClient for use in testing.
 **/

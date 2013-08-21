@@ -9,7 +9,7 @@
  * @license GNU GPL v3
 **/
 
-var config = require('./config.json')
+var config = require('./config/server_config.json')
 var express = require('express');
 var app = express();
 

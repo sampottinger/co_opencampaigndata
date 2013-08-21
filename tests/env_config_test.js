@@ -1,3 +1,10 @@
+/**
+ * Tests for loading environment configuration settings.
+ *
+ * @author Sam Pottinger (samnsparky, http://gleap.org)
+ * @license GNU GPL v3
+**/
+
 var rewire = require('rewire');
 
 var test_util = require('./test_util');
