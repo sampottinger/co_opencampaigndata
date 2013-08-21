@@ -46,19 +46,19 @@ function parseInternationalBool (strVal) {
 /**
  * Read the query components from an HTTP request and return a QueryInfo struct.
  *
- * @param {String} collection The name of the database collection or table that
- *      will be queried against.
+ * @param {String} resource The name of the type of resource that is being
+ *      requested.
  * @param {Object} rawQuery The query components / parameters read from the
  *      HTTP request. For express, this would be request.query.
  * @return {Object} Object that follows the QueryInfo struct as defined in the
  *      structures section of the project wiki.
 **/
-function parseRequestQueryInfo (collection, rawQuery) {
+function parseRequestQueryInfo (resource, rawQuery) {
     var params = {};
-    var query = {params: params, targetCollection: collection};
-    var fields = DEFAULT_FIELDS[collection];
-    var numParams = NUMBER_PARAMS[collection];
-    var boolParams = BOOL_PARAMS[collection];
+    var query = {params: params, targetCollection: resource};
+    var fields = DEFAULT_FIELDS[resource];
+    var numParams = NUMBER_PARAMS[resource];
+    var boolParams = BOOL_PARAMS[resource];
     var apiKey;
 
     query.offset = 0;
@@ -166,6 +166,29 @@ function updateQueryWithOffset (oldQueryComponents, addToOffset) {
 }
 
 
+/**
+ * Serialize a response into a supported format like CSV or JSON.
+ *
+ * Serialize a response into a supported format and add meta data like next-href
+ * and offset as appropriate,
+ *
+ * @param {express.Request} req The current user request this serialization is
+ *      being performed for.
+ * @param {Object} query A Query structure as defined in the structures section
+ *      of the project wiki. This is the query the user is currenlty executing
+ *      with req.
+ * @param {Array} results The array of results (Object) read from the database
+ *      and to be serialized in preparation for returning to the user.
+ * @param {Array} fields An Array of String, each with a name of a field. An
+ *      attribute of a record found in the database will only be returned if it
+ *      is listed in this parameter.
+ * @param {String} format The name of the format to serialize to. Examples
+ *      include "json" and "csv".
+ * @param {String} resource The name of the resource that is being requested.
+ *      Examples include "loans" or "contributions".
+ * @return {q.promise} Promise that resovles to the string serialization of the
+ *      given records and related metadata to return to the user.
+**/
 function serializeResponse (req, query, results, fields, format, resource) {
 
     var urlNoParams = req.url.substr(0,req.url.indexOf('?'));
@@ -188,6 +211,15 @@ function serializeResponse (req, query, results, fields, format, resource) {
 }
 
 
+/**
+ * Send a response back to the client with a HTTP OK status code.
+ *
+ * @param {express.Response} res The express.js response object to write to.
+ * @param {String} serializedResponse The string payload (csv, json, etc.) to
+ *      return to the user.
+ * @param {String} serializationFormat The string name of the format that
+ *      serializedResponse is in ("csv", "json", etc.).
+**/
 function sendResponse (res, serializedResponse, serializationFormat) {
     res.status(200)
     .set('content-type', MIME_INFO[serializationFormat])
@@ -195,7 +227,22 @@ function sendResponse (res, serializedResponse, serializationFormat) {
 }
 
 
-function handleV1Request (req, res, queryInfo, resource, collection, format) {
+/**
+ * Handle a query request made on version 1 of the API.
+ *
+ * @param {express.Request} req The HTTP request information as provided by
+ *      express.js.
+ * @param {express.Response} res The express.js response object to write the
+ *      results of this operation to.
+ * @param {Object} queryInfo A QueryInfo structure corresponding to the query
+ *      components provided by the user in their HTTP request and as found in
+ *      the req parameter.
+ * @param {String} resource The name of the type of resource being requested.
+ *      Examples include "loans" or "contributions".
+ * @param {String} format The format to serialize results / the reponse to.
+ *      Examples include "json" and "csv".
+**/
+function handleV1Request (req, res, queryInfo, resource, format) {
     var apiKey = queryInfo.apiKey;
     var query = queryInfo.query;
     var fields = queryInfo.fields;
@@ -238,53 +285,78 @@ function handleV1Request (req, res, queryInfo, resource, collection, format) {
 }
 
 
-function createV1Handler (resource, collection, format) {
+/**
+ * Creates a closure for a call to handleV1Request.
+ *
+ * Creates a closure around the provided resouce and format information,
+ * returning a newly generated function that takes a express.js Request and
+ * Response. The returned function will parse query components as provided
+ * in the user's HTTP request (and as exposed through the passed Request object)
+ * before calling handleV1Request with the parsed components.
+ *
+ * @param {String} resource The name of the resource to create a handler for.
+ * @param {String} format The name of the format to serialize results to.
+ * @return {function} Function that takes two parameters: a express.js Request
+ *      and express.js Response. The returned function will parse query
+ *      components as provided in the user's HTTP request (and as exposed
+ *      through the passed Request object) before calling handleV1Request with
+ *      the parsed components.
+**/
+function createV1Handler (resource, format) {
 
     return function (req, res) {
         
         var queryInfo;
 
         try {
-            queryInfo = parseRequestQueryInfo(collection, req.query);
+            queryInfo = parseRequestQueryInfo(resource, req.query);
         } catch (err) {
             res.status(500).json({message: err.message});
             return;
         }
 
-        handleV1Request(req, res, queryInfo, resource, collection, format);
+        handleV1Request(req, res, queryInfo, resource, format);
     };
 }
 
 
-function createAndRegisterV1Handlers (app, resource, collection) {
+/**
+ * Create a set of version 1 API endpoint request handlers.
+ *
+ * @param {express.Application} app The application to register the endpoints
+ *      on.
+ * @param {String} resource The name of the resource that endpoints are being
+ *      created for. Examples include "loans" and "contributions".
+**/
+function createAndRegisterV1Handlers (app, resource) {
     app.get(
         '/' + resource,
-        createV1Handler(resource, collection, 'json')
+        createV1Handler(resource, 'json')
     );
     
     app.get(
         '/v1/' + resource,
-        createV1Handler(resource, collection, 'json')
+        createV1Handler(resource, 'json')
     );
     
     app.get(
         '/' + resource + '.json',
-        createV1Handler(resource, collection, 'json')
+        createV1Handler(resource, 'json')
     );
     
     app.get(
         '/v1/' + resource + '.json',
-        createV1Handler(resource, collection, 'json')
+        createV1Handler(resource, 'json')
     );
     
     app.get(
         '/' + resource + '.csv',
-        createV1Handler(resource,collection, 'csv')
+        createV1Handler(resource, 'csv')
     );
     
     app.get(
         '/v1/' + resource + '.csv',
-        createV1Handler(resource,collection, 'csv')
+        createV1Handler(resource, 'csv')
     );
 }
 
@@ -294,7 +366,7 @@ module.exports = function(app) {
       res.status(200).json(services());
     });
 
-    createAndRegisterV1Handlers(app, 'contributions', 'contributions');
-    createAndRegisterV1Handlers(app, 'expenditures', 'expenditures');
-    createAndRegisterV1Handlers(app, 'loans', 'loans');
+    createAndRegisterV1Handlers(app, 'contributions');
+    createAndRegisterV1Handlers(app, 'expenditures');
+    createAndRegisterV1Handlers(app, 'loans');
 }
