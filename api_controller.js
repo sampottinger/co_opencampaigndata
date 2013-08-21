@@ -60,6 +60,20 @@ var getFields = function(collection, params) {
     return fields;
 }
 
+var updateQueryWithOffset = function(req, limit) {
+  var newUrl = "http://" + req.headers.host + req._parsedUrl.pathname;
+  var newParams = [];
+  if(req.query.offset == undefined) {
+    req.query.offset = limit;
+  } else {
+    req.query.offset += limit;
+  }
+  for(var i in req.query) {
+    newParams.push(i + "=" + req.query[i]);
+  }
+  return newParams.join("&");
+}
+
 var handleJsonRequest = function(collection, req, res) {
   var results = [];
   var params = req.query;
@@ -74,7 +88,10 @@ var handleJsonRequest = function(collection, req, res) {
     formatter.format('json',results,fields, collection)
       .then(function(json) {
         var object = JSON.parse(json)
-        object.meta = { offset: query.offset, 'result-set-size': query.resultLimit};
+        object.meta = { offset: query.offset, 
+          'result-set-size': query.resultLimit,
+          'next-href': "http://" + req.headers.host + "?" + updateQueryWithOffset(req, query.resultLimit)
+        };
         res.status(200).json(object);
       });
   }, function(msg) {
