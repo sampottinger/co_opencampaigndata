@@ -12,6 +12,7 @@ var data_formatter = require('./data_formatter');
 var tracer_db_facade = require('./tracer_db_facade');
 var account_manager = require('./account_manager');
 var api_controller_config = require('./config/api_controller_config.json');
+var cors = require('cors');
 
 var DEFAULT_FIELDS = api_controller_config.defaultFields;
 var NUMBER_PARAMS = api_controller_config.numberParams;
@@ -331,38 +332,44 @@ function createV1Handler (resource, format) {
 function createAndRegisterV1Handlers (app, resource) {
     app.get(
         '/' + resource,
+        cors(),
         createV1Handler(resource, 'json')
     );
     
     app.get(
         '/v1/' + resource,
+        cors(),
         createV1Handler(resource, 'json')
     );
     
     app.get(
         '/' + resource + '.json',
+        cors(),
         createV1Handler(resource, 'json')
     );
     
     app.get(
         '/v1/' + resource + '.json',
+        cors(),
         createV1Handler(resource, 'json')
     );
     
     app.get(
         '/' + resource + '.csv',
+        cors(),
         createV1Handler(resource, 'csv')
     );
     
     app.get(
         '/v1/' + resource + '.csv',
+        cors(),
         createV1Handler(resource, 'csv')
     );
 }
 
 
 module.exports = function(app) {
-    app.get('/v1', function(req, res) {
+    app.get('/v1', cors(), function(req, res) {
       res.status(200).json(services());
     });
 

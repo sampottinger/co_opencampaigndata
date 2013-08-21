@@ -33,6 +33,7 @@
     "express": "~3.3.5",
     "nodeunit-httpclient": "~0.2.1",
     "jade": "~0.34.1",
-    "supertest": "~0.7.1"
+    "supertest": "~0.7.1",
+    "cors": "~1.0.1"
   }
 }
