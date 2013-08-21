@@ -79,7 +79,7 @@ function parseRequestQueryInfo (resource, rawQuery) {
         } else if (boolParams.indexOf(componentName) != -1) {
             params[componentName] = parseInternationalBool(componentValue);
         } else {
-            params[componentName] = componentValue;
+            params[componentName] = componentValue.toUpperCase();
         }
     }
 

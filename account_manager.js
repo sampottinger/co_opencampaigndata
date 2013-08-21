@@ -134,6 +134,21 @@ exports.getOrCreateUserByEmail = function (email) {
 };
 
 
+/**
+ * Find a user given that user's API key within the given collection.
+ *
+ * Search the given collection for a record of a user account assigned the
+ * given API key. This is a direct re-exposure of getUserByAPIKey from
+ * account_db_facade but, technically, this manager acts as an adapter to that
+ * facade. No modules should leverage account_db_facade except this one so,
+ * to keep things "conceptually" consistent (Brooks), this functionality is
+ * re-exposed at this layer.
+ *
+ * @param {String} apiKey Finds a user with this API key.
+ * @return {Q.promise} Promise that resolves to an Account object as described
+ *      in the structures article of the project wiki or null if a matching
+ *      account record could not be found.
+**/
 exports.getUserByAPIKey = function (apiKey) {
     return account_db_facade.getUserByAPIKey(apiKey);
 };
