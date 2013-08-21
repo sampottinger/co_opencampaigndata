@@ -7,8 +7,8 @@ var express = require('express');
 var app = express();
 
 var test_contribution_data = [
-  {"committeeID": 123, "lastName": "Smith", "firstName" : "Alice", "amount": 50},
-  {"committeeID": 23,  "lastName": "Smith", "firstName" : "Bob",   "amount": 10},
+  {"recordID": 1,"committeeID": 123, "lastName": "Smith", "firstName" : "Alice", "amount": 50},
+  {"recordID": 2,"committeeID": 23,  "lastName": "Smith", "firstName" : "Bob",   "amount": 10},
 ];
 
 var testDbFacade = {
@@ -35,7 +35,7 @@ module.exports = {
           test.done();
       });
     },
-    testContributionsJsonWithoutParams: function (test) {
+    testContributionsJson: function (test) {
       request(app).get('/v1/contributions.json')
         .set('Accept', 'application/json')
         .end(function (err, res) {
@@ -47,14 +47,15 @@ module.exports = {
           test.done();
       });
     },
-    testContributionsJsonWithParams: function (test) {
-      request(app).get('/v1/contributions.json?committeeID=123')
+    testContributionsJsonWithFields: function (test) {
+      request(app).get('/v1/contributions.json?fields=committeeID,amount')
         .set('Accept', 'application/json')
         .end(function (err, res) {
           test.equal(res.statusCode, 200);
           test.equal(res.headers['content-type'], "application/json");
           test.deepEqual(JSON.parse(res.text), 
-            {contributions: test_contribution_data,
+            {contributions: [ { committeeID: 123, amount: 50 },
+                              { committeeID: 23, amount: 10 } ],
              meta: { offset: 0, 'result-set-size': 500}});
           test.done();
       });
@@ -63,9 +64,19 @@ module.exports = {
       request(app).get('/v1/contributions.csv')
         .set('Accept', 'text/csv')
         .end(function (err, res) {
-          test.equal(res.statusCode, 501);
+          test.equal(res.statusCode, 200);
           test.equal(res.headers['content-type'], "text/csv");
-          test.deepEqual(res.text, "Message\n501: API request unimplemented.");
+          test.deepEqual(res.text, 'recordID,committeeID,amount,firstName,lastName\n1,123,50,"Alice","Smith"\n2,23,10,"Bob","Smith"');
+          test.done()
+      });
+    },
+    testContributionsCsvWithFields: function (test) {
+      request(app).get('/v1/contributions.csv?fields=committeeID,amount')
+        .set('Accept', 'text/csv')
+        .end(function (err, res) {
+          test.equal(res.statusCode, 200);
+          test.equal(res.headers['content-type'], "text/csv");
+          test.deepEqual(res.text, 'committeeID,amount\n123,50\n23,10');
           test.done()
       });
     },
@@ -85,9 +96,9 @@ module.exports = {
       request(app).get('/v1/loans.csv')
         .set('Accept', 'text/csv')
         .end(function (err, res) {
-          test.equal(res.statusCode, 501);
+          test.equal(res.statusCode, 200);
           test.equal(res.headers['content-type'], "text/csv");
-          test.deepEqual(res.text, "Message\n501: API request unimplemented.");
+          test.deepEqual(res.text, 'recordID,committeeID,amount,firstName,lastName\n1,123,50,"Alice","Smith"\n2,23,10,"Bob","Smith"');
           test.done()
       });
     },
@@ -107,9 +118,9 @@ module.exports = {
       request(app).get('/v1/expenditures.csv')
         .set('Accept', 'text/csv')
         .end(function (err, res) {
-          test.equal(res.statusCode, 501);
+          test.equal(res.statusCode, 200);
           test.equal(res.headers['content-type'], "text/csv");
-          test.deepEqual(res.text, "Message\n501: API request unimplemented.");
+          test.deepEqual(res.text, 'recordID,committeeID,amount,firstName,lastName\n1,123,50,"Alice","Smith"\n2,23,10,"Bob","Smith"');
           test.done()
       });
     },

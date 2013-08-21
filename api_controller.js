@@ -17,39 +17,21 @@ var default_fields = {
     "committeeID",
     "amount",
     "firstName",
-    "lastName",
-    "address",
-    "city",
-    "state",
-    "zip",
-    "date",
-    "candidateName"
+    "lastName"
   ],
   expenditures: [
     "recordID",
     "committeeID",
     "amount",
     "firstName",
-    "lastName",
-    "address",
-    "city",
-    "state",
-    "zip",
-    "date",
-    "candidateName"
+    "lastName"
   ],
   loans: [
     "recordID",
     "committeeID",
     "amount",
     "firstName",
-    "lastName",
-    "address",
-    "city",
-    "state",
-    "zip",
-    "date",
-    "candidateName"
+    "lastName"
   ],
 };
 
@@ -104,8 +86,7 @@ var handleCsvRequest = function(collection, req, res) {
   var results = [];
   var params = req.query;
   var key = params.apiKey;
-  var object = {};
-  var fields = getFields(params);
+  var fields = getFields(collection, params);
   var query = createQuery(collection,params);
 
   tracer_db_facade.executeQuery(query,function(next) {
@@ -130,26 +111,20 @@ module.exports = function(app) {
     });
 
     app.get('/v1/contributions.csv', function(req, res) {
-      res.status(501)
-        .header("content-type", "text/csv")
-        .send("Message\n501: API request unimplemented.");
+      handleCsvRequest('contributions',req, res);
     });
 
     app.get('/v1/loans.json', function(req, res) {
       handleJsonRequest('loans', req, res);
     });
     app.get('/v1/loans.csv', function(req, res) {
-      res.status(501)
-        .header("content-type", "text/csv")
-        .send("Message\n501: API request unimplemented.");
+      handleCsvRequest('loans',req, res);
     });
 
     app.get('/v1/expenditures.json', function(req, res) {
       handleJsonRequest('expenditures', req, res);
     });
     app.get('/v1/expenditures.csv', function(req, res) {
-      res.status(501)
-        .header("content-type", "text/csv")
-        .send("Message\n501: API request unimplemented.");
+      handleCsvRequest('expenditures',req, res);
     });
 }
