@@ -9,7 +9,7 @@
 var fs = require('fs');
 var q = require('q');
 
-var CONFIG_FILE_SRC = './config.json';
+var CONFIG_FILE_SRC = './env_config.json';
 
 var loadedConfiguration = null;
 

@@ -20,7 +20,7 @@ var MAX_DB_CONNECTIONS = 2;
 var DB_TIMEOUT = 600;
 var DEFAULT_RESULT_LIMIT = 50;
 var MAX_RESULT_LIMIT = 500;
-var TRACER_DB = 'tracerRecords';
+var TRACER_DB = 'tracer-records-db';
 var ALLOWED_FIELDS = tracer_db_config.allowedFields;
 
 
@@ -34,16 +34,16 @@ var ALLOWED_FIELDS = tracer_db_config.allowedFields;
 **/
 function createTracerDBPool () {
     return generic_pool.Pool({
-        name: 'mongodb-account',
+        name: 'mongodb-tracer',
         create: function(createCallback) {
             env_config.loadConfig().then(function(envSettings) {
                 mongodb.MongoClient.connect(
-                    envSettings.TRACER_DB_URI,
+                    envSettings.tracerDBURI,
                     function (err, db) { 
                         createCallback(null, db); 
                     }
                 );
-            });
+            }, function (err) { throw new Error (err); });
         },
         destroy: function(db) { db.close(); },
         max: MAX_DB_CONNECTIONS,
@@ -210,9 +210,18 @@ exports.executeQuery = function (query, onNext, onEnd, onError) {
                     }
 
                     // Redirect stream events to client code
-                    var stream = results.stream();
-                    stream.on('data', onNext);
-                    stream.on('end', onEnd);
+                    var stream = results.toArray(
+                        function (err, results) {
+                            if (err) {
+                                throw new Error(err);
+                            }
+                            var numResults = results.length;
+                            for (var i=0; i<numResults; i++) {
+                                onNext(results[i]);
+                            }
+                            onEnd();
+                        }
+                    );
                     innerDeferred.resolve(dbConnection);
                 }
             );

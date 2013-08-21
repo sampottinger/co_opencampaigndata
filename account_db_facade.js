@@ -45,7 +45,7 @@ var env_config = require('./env_config');
 
 /**
  * Pool for account database connections. This may be the same database as the
- * usages database. The connected URI is controlled by the env.ACCOUNT_DB_URI
+ * usages database. The connected URI is controlled by the env.accountDBURI
  * environment variable.
 **/
 function createAccountDBPool()
@@ -55,7 +55,7 @@ function createAccountDBPool()
         create: function(createCallback) {
             env_config.loadConfig().then(function(envSettings) {
                 mongodb.MongoClient.connect(
-                    envSettings.ACCOUNT_DB_URI,
+                    envSettings.accountDBURI,
                     function (err, db) { 
                         createCallback(null, db); 
                     }
@@ -71,8 +71,8 @@ var accountDBPool = createAccountDBPool();
 
 
 /**
- * Pool for account database connections. This may be the same database as the
- * usages database. The connected URI is controlled by the env.ACCOUNT_DB_URI
+ * Pool for logging database connections. This may be the same database as the
+ * usages database. The connected URI is controlled by the env.loggingDBURI
  * environment variable.
 **/
 function createLoggingDBPool()
@@ -82,7 +82,7 @@ function createLoggingDBPool()
         create: function(callback) {
             env_config.loadConfig().then(function(envSettings) {
                 mongodb.MongoClient.connect(
-                    envSettings.LOGGING_DB_URI,
+                    envSettings.loggingDBURI,
                     function (err, db) { 
                         callback(null, db); 
                     }
@@ -442,7 +442,6 @@ function decorateForDatabase(targetFunction, database, collection, context) {
         var message = 'Error while ' +  context + ': ' + error;
         message += ': ' + error.stack;
         message += '\n\n';
-        console.log(message);
         throw new Error(message);
     };
 

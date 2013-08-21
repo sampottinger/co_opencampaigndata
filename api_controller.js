@@ -75,28 +75,30 @@ var updateQueryWithOffset = function(req, limit) {
 }
 
 var handleJsonRequest = function(collection, req, res) {
-  var results = [];
-  var params = req.query;
-  var key = params.apiKey;
-  var object = {};
-  var fields = getFields(collection, params);
-  var query = createQuery(collection,params);
+    var results = [];
+    var params = req.query;
+    var key = params.apiKey;
+    var object = {};
+    var fields = getFields(collection, params);
+    var query = createQuery(collection,params);
 
-  tracer_db_facade.executeQuery(query,function(next) {
-    results.push(next);
-  }, function() {
-    formatter.format('json',results,fields, collection)
-      .then(function(json) {
-        var object = JSON.parse(json)
-        object.meta = { offset: query.offset, 
-          'result-set-size': query.resultLimit,
-          'next-href': "http://" + req.headers.host + "?" + updateQueryWithOffset(req, query.resultLimit)
-        };
-        res.status(200).json(object);
-      });
-  }, function(msg) {
-    res.status(500).json({message: msg});
-  });
+    tracer_db_facade.executeQuery(
+        query,
+        function(next) {
+            results.push(next);
+        },
+        function() {
+            formatter.format('json',results,fields, collection)
+            .then(function(json) {
+                var object = JSON.parse(json)
+                object.meta = { offset: query.offset, 
+                    'result-set-size': query.resultLimit,
+                    'next-href': "http://" + req.headers.host + "?" + updateQueryWithOffset(req, query.resultLimit)
+                };
+                res.status(200).json(object);
+            });
+        }, function(msg) { res.status(500).json({message: msg}); }
+    );
 }
 
 var handleCsvRequest = function(collection, req, res) {
