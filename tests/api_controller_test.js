@@ -8,8 +8,8 @@ var app = express();
 
 var test_contribution_data = [
   {"committeeID": 123, "lastName": "Smith", "firstName" : "Alice", "amount": 50},
-  {"committeeID": 23, "lastName": "Smith", "firstName" : "Bob", "amount": 10},
-]
+  {"committeeID": 23,  "lastName": "Smith", "firstName" : "Bob",   "amount": 10},
+];
 
 var testDbFacade = {
   executeQuery: function(query, onNext, onEnd, onError) {
@@ -42,7 +42,20 @@ module.exports = {
           test.equal(res.statusCode, 200);
           test.equal(res.headers['content-type'], "application/json");
           test.deepEqual(JSON.parse(res.text), 
-            {contributions : test_contribution_data});
+            {contributions: test_contribution_data,
+             meta: { offset: 0, 'result-set-size': 500}});
+          test.done();
+      });
+    },
+    testContributionsJsonWithParams: function (test) {
+      request(app).get('/v1/contributions.json?committeeID=123')
+        .set('Accept', 'application/json')
+        .end(function (err, res) {
+          test.equal(res.statusCode, 200);
+          test.equal(res.headers['content-type'], "application/json");
+          test.deepEqual(JSON.parse(res.text), 
+            {contributions: test_contribution_data,
+             meta: { offset: 0, 'result-set-size': 500}});
           test.done();
       });
     },
@@ -60,10 +73,12 @@ module.exports = {
       request(app).get('/v1/loans.json')
         .set('Accept', 'application/json')
         .end(function (err, res) {
-          test.equal(res.statusCode, 501);
+          test.equal(res.statusCode, 200);
           test.equal(res.headers['content-type'], "application/json");
-          test.deepEqual(JSON.parse(res.text), {message: "API request unimplemented."});
-          test.done()
+          test.deepEqual(JSON.parse(res.text), 
+            {loans: test_contribution_data,
+             meta: { offset: 0, 'result-set-size': 500}});
+          test.done();
       });
     },
     testLoansCsv: function (test) {
@@ -80,10 +95,12 @@ module.exports = {
       request(app).get('/v1/expenditures.json')
         .set('Accept', 'application/json')
         .end(function (err, res) {
-          test.equal(res.statusCode, 501);
+          test.equal(res.statusCode, 200);
           test.equal(res.headers['content-type'], "application/json");
-          test.deepEqual(JSON.parse(res.text), {message: "API request unimplemented."});
-          test.done()
+          test.deepEqual(JSON.parse(res.text), 
+            {expenditures: test_contribution_data,
+             meta: { offset: 0, 'result-set-size': 500}});
+          test.done();
       });
     },
     testExpendituresCsv: function (test) {
