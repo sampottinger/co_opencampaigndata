@@ -5,10 +5,6 @@
  * @license GNU GPL v3
 **/
 
-// TODO: This is experimental and in progress! Do not rely on this code yet!
-// WARNING: This is experimental and in progress! Do not rely on this code yet!
-// TODO: This form of dependency injection is terribly terribly messy.
-
 var q = require('q');
 var rewire = require('rewire');
 
@@ -27,8 +23,8 @@ mock_mongo_client = new mock_mongodb.MockMongoClient();
 
 // Dependency injection for runtime environment
 var replacementConfig = {
-    ACCOUNT_DB_URI: TEST_ACCOUNT_DB_URI,
-    LOGGING_DB_URI: TEST_USAGES_DB_URI
+    accountDBURI: TEST_ACCOUNT_DB_URI,
+    loggingDBURI: TEST_USAGES_DB_URI
 };
 var replacementLoadConfig = function () {
     var deferred = q.defer();

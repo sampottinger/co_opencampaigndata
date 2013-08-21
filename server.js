@@ -9,7 +9,7 @@
  * @license GNU GPL v3
 **/
 
-var config = require('./config.json')
+var config = require('./config/server_config.json')
 var express = require('express');
 var app = express();
 
@@ -17,6 +17,7 @@ app.use(express.static(__dirname + '/public'));
 app.use(express.errorHandler());
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
+app.use(express.bodyParser());
 
 require('./frontend_controller')(app);
 require('./api_controller')(app);
