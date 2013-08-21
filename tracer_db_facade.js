@@ -13,7 +13,7 @@ var mongodb = require('mongodb');
 var q = require('q');
 
 var env_config = require('./env_config');
-var tracer_db_config = require('./tracer_db_config.json');
+var tracer_db_config = require('./config/tracer_db_config.json');
 
 // Module behavioral constants
 var MAX_DB_CONNECTIONS = 2;
@@ -128,9 +128,9 @@ function createDBQueryForParams (params, fieldIndex) {
                 query[indexEntry.dbField] = paramEntry;
             }
             
-            // Default to $eq if the field index does not provide a queryOp
+            // Default to qual if the field index does not provide a queryOp
             if (queryOp === undefined) {
-                paramEntry.$eq = paramValue;
+                query[indexEntry.dbField] = paramValue;
             } else {
                 paramEntry[queryOp] = paramValue;
             }
@@ -146,18 +146,10 @@ function createDBQueryForParams (params, fieldIndex) {
  *
  * @param {Object} query An Query Object as described in the structures section
  *      of the project wiki.
- * @param {function} onNext Callback for when a record has been loaded from the
- *      database.
- * @param {function} onEnd Callback for when all records have been loaded from
- *      the database. Will not execute if error encountered.
- * @param {function} onError Callback if an error is encountered while reading
- *      from the results stream. Should take a single String argument describing
- *      the error encountered.
- * @return {Q.promise} Promise that resolves to undefined. Will resolve after
- *      streaming results has started but may resolve before that streaming has
- *      finished.
+ * @return {Q.promise} Promise that resolves to an Array of records loaded from
+ *      the database.
 **/
-exports.executeQuery = function (query, onNext, onEnd, onError) {
+exports.executeQuery = function (query) {
     var deferred = q.defer();
     var collection = query.targetCollection;
     var params = query.params;
@@ -210,10 +202,15 @@ exports.executeQuery = function (query, onNext, onEnd, onError) {
                     }
 
                     // Redirect stream events to client code
-                    var stream = results.stream()
-                    stream.on('data', onNext);
-                    stream.on('end', onEnd);
-                    innerDeferred.resolve(dbConnection);
+                    results.toArray(function (err, docs) {
+                        if (err) {
+                            deferred.reject(err);
+                        } else {
+                            deferred.resolve(docs);
+                        }
+
+                        innerDeferred.resolve(dbConnection);
+                    });
                 }
             );
 

@@ -118,31 +118,27 @@ module.exports = {
 
         mock_mongo_client.prepareForNextUse(testResult);
 
-        tracer_db_facade.executeQuery(
-            testQuery,
-            function (nextResult) {
-                results.push(nextResult);
-            },
-            function () {
-                test.deepEqual(results, testResult);
-                test.deepEqual(
-                    mock_mongo_client.getLastSelector(),
-                    expectedSelector
-                );
-                test.deepEqual(
-                    mock_mongo_client.getLastOptions(),
-                    expectedOptions
-                );
-                test.equal(
-                    mock_mongo_client.getLastCollectionName(),
-                    TEST_COLLECTION_NAME
-                );
-                test.done();
-            },
-            function (error) {
-                test.ok(false, 'Unexpected error: ' + error);
-            }
-        ).fail(function (err) {test.ok(false, err); test.done();});
+        tracer_db_facade.executeQuery(testQuery)
+        .then(function (results) {
+            test.deepEqual(results, testResult);
+            test.deepEqual(
+                mock_mongo_client.getLastSelector(),
+                expectedSelector
+            );
+            test.deepEqual(
+                mock_mongo_client.getLastOptions(),
+                expectedOptions
+            );
+            test.equal(
+                mock_mongo_client.getLastCollectionName(),
+                TEST_COLLECTION_NAME
+            );
+            test.done();
+        },
+        function (err) {
+            test.ok(false, err);
+            test.done();
+        });
     },
 
     /**
@@ -181,32 +177,27 @@ module.exports = {
 
         mock_mongo_client.prepareForNextUse(testResult);
 
-        tracer_db_facade.executeQuery(
-            testQuery,
-            function (nextResult) {
-                results.push(nextResult);
-            },
-            function () {
-                test.deepEqual(results, testResult);
-                test.deepEqual(
-                    mock_mongo_client.getLastSelector(),
-                    expectedSelector
-                );
-                test.deepEqual(
-                    mock_mongo_client.getLastOptions(),
-                    expectedOptions
-                );
-                test.equal(
-                    mock_mongo_client.getLastCollectionName(),
-                    TEST_COLLECTION_NAME
-                );
-                test.done();
-            },
-            function (error) {
-                test.ok(false, 'Unexpected stream error: ' + error);
-                test.done();
-            }
-        ).fail(function (err) {test.ok(false, err); test.done();});
+        tracer_db_facade.executeQuery(testQuery)
+        .then(function (results) {
+            test.deepEqual(results, testResult);
+            test.deepEqual(
+                mock_mongo_client.getLastSelector(),
+                expectedSelector
+            );
+            test.deepEqual(
+                mock_mongo_client.getLastOptions(),
+                expectedOptions
+            );
+            test.equal(
+                mock_mongo_client.getLastCollectionName(),
+                TEST_COLLECTION_NAME
+            );
+            test.done();
+        },
+        function (err) {
+            test.ok(false, err);
+            test.done();
+        });
     },
 
 
@@ -226,7 +217,7 @@ module.exports = {
             {comitteeID: TEST_COMMITEE_ID_2}
         ];
         var expectedSelector = {
-            name: {$eq: 'Test Name'}
+            name: 'Test Name'
         };
         var testQuery = {
             targetCollection: TEST_COLLECTION_NAME,
@@ -237,28 +228,23 @@ module.exports = {
 
         mock_mongo_client.prepareForNextUse(testResult);
 
-        tracer_db_facade.executeQuery(
-            testQuery,
-            function (nextResult) {
-                results.push(nextResult);
-            },
-            function () {
-                test.deepEqual(results, testResult);
-                test.deepEqual(
-                    mock_mongo_client.getLastSelector(),
-                    expectedSelector
-                );
-                test.equal(
-                    mock_mongo_client.getLastCollectionName(),
-                    TEST_COLLECTION_NAME
-                );
-                test.done();
-            },
-            function (error) {
-                test.ok(false, 'Unexpected stream error: ' + error);
-                test.done();
-            }
-        ).fail(function (err) {test.ok(false, err); test.done();});
+        tracer_db_facade.executeQuery(testQuery)
+        .then(function (results) {
+            test.deepEqual(results, testResult);
+            test.deepEqual(
+                mock_mongo_client.getLastSelector(),
+                expectedSelector
+            );
+            test.equal(
+                mock_mongo_client.getLastCollectionName(),
+                TEST_COLLECTION_NAME
+            );
+            test.done();
+        },
+        function (err) {
+            test.ok(false, err);
+            test.done();
+        });
     },
 
     /**
@@ -282,18 +268,8 @@ module.exports = {
 
         mock_mongo_client.prepareForNextUse(testResult);
 
-        tracer_db_facade.executeQuery(
-            testQuery,
-            function (nextResult) {
-                test.ok(false, 'Unexpected success.');
-            },
-            function () {
-                test.ok(false, 'Unexpected success.');
-            },
-            function (error) {
-                test.done();
-            }
-        ).fail(function (err) {test.done();});
+        tracer_db_facade.executeQuery(testQuery)
+        .fail(function (err) {test.done();});
     },
 
 
@@ -320,17 +296,7 @@ module.exports = {
 
         mock_mongo_client.prepareForNextUse(testResult);
 
-        tracer_db_facade.executeQuery(
-            testQuery,
-            function (nextResult) {
-                test.ok(false, 'Unexpected success.');
-            },
-            function () {
-                test.ok(false, 'Unexpected success.');
-            },
-            function (error) {
-                test.done();
-            }
-        ).fail(function (err) {test.done();});
+        tracer_db_facade.executeQuery(testQuery)
+        .fail(function (err) {test.done();});
     }
 };

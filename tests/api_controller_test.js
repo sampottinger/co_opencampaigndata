@@ -47,7 +47,6 @@ module.exports = {
           test.deepEqual(result.contributions, 
             test_contribution_data);
           test.equal(result.meta.offset, 0);
-          test.equal(result.meta['result-set-size'], 500);
           test.equal(next_href.query.offset, 500);
           test.done();
       });
@@ -64,7 +63,6 @@ module.exports = {
             [ { committeeID: 123, amount: 50 },
               { committeeID: 23, amount: 10 } ]);
           test.equal(result.meta.offset, 0);
-          test.equal(result.meta['result-set-size'], 500);
           test.equal(next_href.query.offset, 500);
           test.done();
       });
@@ -99,7 +97,6 @@ module.exports = {
           test.equal(res.headers['content-type'], "application/json");
           test.deepEqual(result.loans, test_contribution_data);
           test.equal(result.meta.offset, 0);
-          test.equal(result.meta['result-set-size'], 500);
           test.equal(next_href.query.offset, 500);
           test.done();
       });
@@ -124,7 +121,6 @@ module.exports = {
           test.equal(res.headers['content-type'], "application/json");
           test.deepEqual(result.expenditures, test_contribution_data);
           test.equal(result.meta.offset, 0);
-          test.equal(result.meta['result-set-size'], 500);
           test.equal(next_href.query.offset, 500);
           test.done();
       });
