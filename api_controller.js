@@ -29,18 +29,30 @@ var MIME_INFO = {
  * Convert an non-localized boolean valid (0 or 1) to JavaScript-native true or
  * false respectively.
  *
- * @param {String} val The value to inter
+ * @param {String} strVal The string value to interpret as true or false.
+ * @return {Boolean} The boolean value parsed from strVal.
+ * @throws {Error} Error thrown if strVal is not equal to "0" or "1".
 **/
-function parseInternationalBool (val) {
-    if (val === '1')
+function parseInternationalBool (strVal) {
+    if (strVal === '1')
         return true;
-    else if (val === '0')
+    else if (strVal === '0')
         return false;
     else
-        throw new Error(val + ' not a valid boolean value. Use 0 or 1.');
+        throw new Error(strVal + ' not a valid boolean value. Use 0 or 1.');
 }
 
 
+/**
+ * Read the query components from an HTTP request and return a QueryInfo struct.
+ *
+ * @param {String} collection The name of the database collection or table that
+ *      will be queried against.
+ * @param {Object} rawQuery The query components / parameters read from the
+ *      HTTP request. For express, this would be request.query.
+ * @return {Object} Object that follows the QueryInfo struct as defined in the
+ *      structures section of the project wiki.
+**/
 function parseRequestQueryInfo (collection, rawQuery) {
     var params = {};
     var query = {params: params, targetCollection: collection};
@@ -75,6 +87,28 @@ function parseRequestQueryInfo (collection, rawQuery) {
 }
 
 
+/**
+ * Check that a user account exists and that the account can execute a query.
+ *
+ * Deferred callback for after looking up an account in the Accounts database
+ * given that Account's API key. This will check that the account was located
+ * and that the user has not exceeded her request rates. If the account was not
+ * found by API key or throttling limits have been exceeded, the provided
+ * response will be set to the apporpriate HTTP status code and a JSON encoded
+ * error message will be provided.
+ *
+ * @param {express.Response} res The express.js response to operate on if the
+ *      account could not be located or throttling limits have been exceeded.
+ * @param {Object} account An Account structure as defined in the structures
+ *      section of the project wiki or null if the account could not be
+ *      located.
+ * @param {Object} query A Query structure as defined in the structures
+ *      section of the project wiki. This is the query that the current user is
+ *      trying to execute against the provided account.
+ * @return {q.promise} Promise that resolves to true if the user was located by
+ *      her API key and has not exceeded rate limiting restrictions. The
+ *      promise will resolve to false otherwise.
+**/
 function checkUserCredentials (res, account, query) {
     var deferred = q.defer();
 
@@ -98,31 +132,51 @@ function checkUserCredentials (res, account, query) {
 }
 
 
-function updateQueryWithOffset (req, offset) {
-    var newUrl = "http://" + req.headers.host + req._parsedUrl.pathname;
-    var newParams = [];
-    if(req.query.offset == undefined) {
-        req.query.offset = offset;
+/**
+ * Update a set of HTTP request query components to reflect a new offset.
+ *
+ * Updates a set of HTTP request query components, replacing the existing
+ * offset query component with a new offset value. If an offset query component
+ * does not already exist, a new one will be created.
+ *
+ * @param {Object} oldQueryComponents Object encapsulating query components to
+ *      operate on.
+ * @param {Number} addToOffset The number of records to offset from the given
+ *      query components previous offset. If no offset was found in the original
+ *      set of query components, this parameter will be the new offset.
+ * @note This does not return a new set of query components but a url encoded
+ *      listing of those components.
+**/
+function updateQueryWithOffset (oldQueryComponents, addToOffset) {
+
+    if(oldQueryComponents.offset == undefined) {
+        oldQueryComponents.offset = addToOffset;
     } else {
-        var newOffset = parseInt(req.query.offset) + offset;
-        req.query.offset = newOffset;
+        var newOffset = parseInt(oldQueryComponents.offset) + addToOffset;
+        oldQueryComponents.offset = newOffset;
     }
-    for(var i in req.query) {
-        newParams.push(i + "=" + req.query[i]);
+    
+    var newParams = [];
+    for(var componentName in oldQueryComponents) {
+        var newValue = encodeURIComponent(oldQueryComponents[componentName]);
+        newParams.push(componentName + "=" + newValue);
     }
+    
     return newParams.join("&");
 }
 
 
 function serializeResponse (req, query, results, fields, format, resource) {
 
-    var nextHref = 'http://' + req.headers.host + '?';
-    nextHref += updateQueryWithOffset(req, results.length);
+    var urlNoParams = req.url.substr(0,req.url.indexOf('?'));
+    var nextHref = 'http://' + req.headers.host + urlNoParams + '?';
+    nextHref += updateQueryWithOffset(req.query, results.length);
 
-    var metaInfo = {
-        offset: query.offset,
-        'next-href': nextHref
-    };
+    var metaInfo = { offset: query.offset };
+    if(results.length == 0)
+        metaInfo['next-href'] = null;
+    else
+        metaInfo['next-href'] = nextHref;
 
     return data_formatter.format(
         format,
