@@ -23,11 +23,21 @@ var MIME_INFO = {
 };
 
 
+/**
+ * Convert "0" to false and "1" to true.
+ *
+ * Convert an non-localized boolean valid (0 or 1) to JavaScript-native true or
+ * false respectively.
+ *
+ * @param {String} val The value to inter
+**/
 function parseInternationalBool (val) {
     if (val === '1')
         return true;
-    else
+    else if (val === '0')
         return false;
+    else
+        throw new Error(val + ' not a valid boolean value. Use 0 or 1.');
 }
 
 
@@ -131,8 +141,7 @@ function sendResponse (res, serializedResponse, serializationFormat) {
 }
 
 
-function handleV1Request (req, res, resource, collection, format) {
-    var queryInfo = parseRequestQueryInfo(collection, req.query);
+function handleV1Request (req, res, queryInfo, resource, collection, format) {
     var apiKey = queryInfo.apiKey;
     var query = queryInfo.query;
     var fields = queryInfo.fields;
@@ -176,8 +185,19 @@ function handleV1Request (req, res, resource, collection, format) {
 
 
 function createV1Handler (resource, collection, format) {
+
     return function (req, res) {
-        handleV1Request(req, res, resource, collection, format);
+        
+        var queryInfo;
+
+        try {
+            queryInfo = parseRequestQueryInfo(collection, req.query);
+        } catch (err) {
+            res.status(500).json({message: err.message});
+            return;
+        }
+
+        handleV1Request(req, res, queryInfo, resource, collection, format);
     };
 }
 
