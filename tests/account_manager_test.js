@@ -4,9 +4,6 @@
  * @author Sam Pottinger (samnsparky, http://gleap.org)
 **/
 
-// TODO: This is experimental and in progress! Do not rely on this code yet!
-// WARNING: This is experimental and in progress! Do not rely on this code yet!
-
 var q = require('Q');
 var rewire = require('rewire');
 var sinon = require('sinon');
