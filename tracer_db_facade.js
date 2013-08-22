@@ -18,8 +18,8 @@ var tracer_db_config = require('./config/tracer_db_config.json');
 // Module behavioral constants
 var MAX_DB_CONNECTIONS = 2;
 var DB_TIMEOUT = 600;
-var DEFAULT_RESULT_LIMIT = 50;
-var MAX_RESULT_LIMIT = 500;
+var DEFAULT_RESULT_LIMIT = 500;
+var MAX_RESULT_LIMIT = 5000;
 var TRACER_DB = 'tracer-records-db';
 var ALLOWED_FIELDS = tracer_db_config.allowedFields;
 
