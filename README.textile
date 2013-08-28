@@ -45,6 +45,9 @@ h3. Deployment
 
 This service remains under active development and will be deployed to http://co.opencampaigndata.org. Instructions for deployment will be added at that time.
 
+h3. Bindings and Libraries
+
+* "R by Max Berson":https://github.com/mberson/co_opencampaigndata-R-bindings
 
 h3. Technologies and Resources Used
 
