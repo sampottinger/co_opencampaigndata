@@ -17,6 +17,7 @@ var cors = require('cors');
 var DEFAULT_FIELDS = api_controller_config.defaultFields;
 var NUMBER_PARAMS = api_controller_config.numberParams;
 var BOOL_PARAMS = api_controller_config.boolParams;
+var MISSING_API_KEY_MSG = 'Must include an apiKey as a query parameter.';
 
 var MIME_INFO = {
     'json': 'application/json',
@@ -270,6 +271,11 @@ function handleV1Request (req, res, queryInfo, resource, format) {
     var sendResponseClosure = function (serializedResponse) {
         return sendResponse(res, serializedResponse, format);
     };
+
+    if (apiKey == null || apiKey == undefined) {
+        res.status(500).json({message: MISSING_API_KEY_MSG});
+        return;
+    }
 
     account_manager.getUserByAPIKey(apiKey)
     .then(checkUserCredentialsClosure, genericErrorHandler)
