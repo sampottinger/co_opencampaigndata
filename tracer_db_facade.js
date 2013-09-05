@@ -22,7 +22,7 @@ var DEFAULT_RESULT_LIMIT = 500;
 var MAX_RESULT_LIMIT = 5000;
 var TRACER_DB = 'tracer-records-db';
 var ALLOWED_FIELDS = tracer_db_config.allowedFields;
-var DATE_FIELDS = ['filedDate', 'date'];
+var DATE_FIELDS = ['filedDate', 'date', 'expenditureDate'];
 var NUM_DATE_FIELDS = DATE_FIELDS.length;
 
 
@@ -223,7 +223,7 @@ exports.executeQuery = function (query) {
                                     fieldValue = doc[fieldName];
                                     if (fieldValue !== undefined)
                                     {
-                                        fieldValue = new Date(fieldValue);
+                                        fieldValue = fieldValue.toISOString();
                                         doc[fieldName] = fieldValue;
                                     }
                                 }

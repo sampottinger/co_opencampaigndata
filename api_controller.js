@@ -7,16 +7,19 @@
 
 var q = require('q');
 
+var cors = require('cors');
+var moment = require('moment');
+
 var services = require('./services');
 var data_formatter = require('./data_formatter');
 var tracer_db_facade = require('./tracer_db_facade');
 var account_manager = require('./account_manager');
 var api_controller_config = require('./config/api_controller_config.json');
-var cors = require('cors');
 
 var DEFAULT_FIELDS = api_controller_config.defaultFields;
 var NUMBER_PARAMS = api_controller_config.numberParams;
 var BOOL_PARAMS = api_controller_config.boolParams;
+var DATE_PARAMS = api_controller_config.dateParams;
 
 var MIME_INFO = {
     'json': 'application/json',
@@ -60,6 +63,7 @@ function parseRequestQueryInfo (resource, rawQuery) {
     var fields = DEFAULT_FIELDS[resource];
     var numParams = NUMBER_PARAMS[resource];
     var boolParams = BOOL_PARAMS[resource];
+    var dateParams = DATE_PARAMS[resource];
     var apiKey;
 
     query.offset = 0;
@@ -79,6 +83,8 @@ function parseRequestQueryInfo (resource, rawQuery) {
             params[componentName] = parseFloat(componentValue);
         } else if (boolParams.indexOf(componentName) != -1) {
             params[componentName] = parseInternationalBool(componentValue);
+        } else if (dateParams.indexOf(componentName) != -1) {
+            params[componentName] = moment(componentValue).toDate();
         } else {
             params[componentName] = componentValue.toUpperCase();
         }

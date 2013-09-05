@@ -59,5 +59,27 @@
             "amended",
             "amendment"
         ]
+    },
+    "dateParams": {
+        "contributions": [
+            "startDate",
+            "endDate",
+            "startFiledDate",
+            "endFiledDate"
+        ],
+        "expenditures": [
+            "startDate",
+            "endDate",
+            "startFiledDate",
+            "endFiledDate"
+        ],
+        "contributions": [
+            "startDate",
+            "endDate",
+            "startFiledDate",
+            "endFiledDate",
+            "minLoanStartDate",
+            "maxLoanStartDate"
+        ]
     }
 }
