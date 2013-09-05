@@ -213,9 +213,13 @@ module.exports = {
     testDefaultQueryOp: function (test) {
         var results = [];
         var testResult = [
-            {comitteeID: TEST_COMMITEE_ID_1},
-            {comitteeID: TEST_COMMITEE_ID_2}
+            {comitteeID: TEST_COMMITEE_ID_1, date:new Date(1)},
+            {comitteeID: TEST_COMMITEE_ID_2, date:new Date(2)}
         ];
+        var interpretedTestResult = [
+            {comitteeID: TEST_COMMITEE_ID_1, date:new Date(1).toISOString()},
+            {comitteeID: TEST_COMMITEE_ID_2, date:new Date(2).toISOString()}
+        ]
         var expectedSelector = {
             name: 'Test Name'
         };
@@ -230,7 +234,7 @@ module.exports = {
 
         tracer_db_facade.executeQuery(testQuery)
         .then(function (results) {
-            test.deepEqual(results, testResult);
+            test.deepEqual(results, interpretedTestResult);
             test.deepEqual(
                 mock_mongo_client.getLastSelector(),
                 expectedSelector
