@@ -22,6 +22,8 @@ var DEFAULT_RESULT_LIMIT = 500;
 var MAX_RESULT_LIMIT = 5000;
 var TRACER_DB = 'tracer-records-db';
 var ALLOWED_FIELDS = tracer_db_config.allowedFields;
+var DATE_FIELDS = ['filedDate', 'date'];
+var NUM_DATE_FIELDS = DATE_FIELDS.length;
 
 
 /**
@@ -206,6 +208,27 @@ exports.executeQuery = function (query) {
                         if (err) {
                             deferred.reject(err);
                         } else {
+                            var fieldName;
+                            var fieldValue;
+                            var doc;
+                            var numDocs = docs.length;
+                            
+                            // TODO(samnsparky): Stream results while doing
+                            // this transform.
+                            for (var i=0; i<numDocs; i++)
+                            {
+                                doc = docs[i];
+                                for (var j=0; j<NUM_DATE_FIELDS; j++) {
+                                    fieldName = DATE_FIELDS[j];
+                                    fieldValue = doc[fieldName];
+                                    if (fieldValue !== undefined)
+                                    {
+                                        fieldValue = new Date(fieldValue);
+                                        doc[fieldName] = fieldValue;
+                                    }
+                                }
+                            }
+
                             deferred.resolve(docs);
                         }
 
