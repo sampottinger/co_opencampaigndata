@@ -273,7 +273,7 @@ function handleV1Request (req, res, queryInfo, resource, format) {
     };
 
     if (apiKey == null || apiKey == undefined) {
-        res.status(500).json({message: MISSING_API_KEY_MSG});
+        res.status(403).json({message: MISSING_API_KEY_MSG});
         return;
     }
 
