@@ -27,8 +27,8 @@
             "maxAmount": {"dbField": "amount", "queryOp": "$lte"},
             "startFiledDate": {"dbField": "filedDate", "queryOp": "$gte"},
             "endFiledDate": {"dbField": "filedDate", "queryOp": "$lte"},
-            "startDate": {"dbField": "date", "queryOp": "$gte"},
-            "endDate": {"dbField": "date", "queryOp": "$lte"}
+            "startDate": {"dbField": "contributionDate", "queryOp": "$gte"},
+            "endDate": {"dbField": "contributionDate", "queryOp": "$lte"}
         },
         "expenditures": {
             "commiteeID": {"dbField": "commiteeID"},
@@ -57,8 +57,8 @@
             "maxAmount": {"dbField": "amount", "queryOp": "$lte"},
             "startFiledDate": {"dbField": "filedDate", "queryOp": "$gte"},
             "endFiledDate": {"dbField": "filedDate", "queryOp": "$lte"},
-            "startDate": {"dbField": "date", "queryOp": "$gte"},
-            "endDate": {"dbField": "date", "queryOp": "$lte"}
+            "startDate": {"dbField": "expenditureDate", "queryOp": "$gte"},
+            "endDate": {"dbField": "expenditureDate", "queryOp": "$lte"}
         },
         "loans": {
             "commiteeID": {"dbField": "commiteeID"},
