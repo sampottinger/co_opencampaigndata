@@ -221,7 +221,7 @@ exports.executeQuery = function (query) {
                                 for (var j=0; j<NUM_DATE_FIELDS; j++) {
                                     fieldName = DATE_FIELDS[j];
                                     fieldValue = doc[fieldName];
-                                    if (fieldValue !== undefined)
+                                    if (fieldValue !== undefined && fieldValue !== "")
                                     {
                                         fieldValue = fieldValue.toISOString();
                                         doc[fieldName] = fieldValue;
