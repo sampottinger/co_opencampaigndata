@@ -223,7 +223,12 @@ exports.executeQuery = function (query) {
                                     fieldValue = doc[fieldName];
                                     if (fieldValue !== undefined && fieldValue !== "")
                                     {
-                                        fieldValue = fieldValue.toISOString();
+                                        try {
+                                            fieldValue = new Date(fieldValue).toISOString();
+                                        } catch(e) {
+                                            console.log("Couldn't parse " + fieldValue + " as a valid Date.");
+                                            fieldValue = undefined;
+                                        }
                                         doc[fieldName] = fieldValue;
                                     }
                                 }
