@@ -31,7 +31,6 @@
         ],
         "expenditures": [
             "commiteeID",
-            "recordID",
             "amendedRecordID",
             "minAmount",
             "maxAmount"
